@@ -81,7 +81,7 @@ const config: HardhatUserConfig = {
       },
       mining: {
         auto: true,
-        interval: 5_000,
+        interval: +process.env.INTERVAL || 1000,
       },
     },
     rinkeby: {
