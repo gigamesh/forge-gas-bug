@@ -4,27 +4,33 @@ import hardhat_SplitMain from './deployments/localhost/SplitMain.json';
 import mainnet_ArtistCreator from './deployments/mainnet/ArtistCreator.json';
 import rinkeby_ArtistCreator from './deployments/rinkeby/ArtistCreator.json';
 
-type Addresses = {
-  artistCreator?: string;
-  splitMain?: string;
-};
+// Same address on all networks
+const SPLIT_MAIN = '0x2ed6c4B5dA6378c7897AC67Ba9e43102Feb694EE';
 
-export const addresses: { [key: string]: Addresses } = {
-  hardhat: {
+export const addresses = {
+  // hardhat
+  development: {
     artistCreator: hardhat_ArtistCreator.address,
     splitMain: hardhat_SplitMain.address,
   },
-  rinkeby: {
+  // rinkeby
+  preview: {
     artistCreator: rinkeby_ArtistCreator.address,
-    splitMain: '0x2ed6c4B5dA6378c7897AC67Ba9e43102Feb694EE',
+    splitMain: SPLIT_MAIN,
   },
-  mainnet: {
+  // rinkeby
+  staging: {
+    artistCreator: rinkeby_ArtistCreator.address,
+    splitMain: SPLIT_MAIN,
+  },
+  // mainnet
+  production: {
     artistCreator: mainnet_ArtistCreator.address,
-    splitMain: '0x2ed6c4B5dA6378c7897AC67Ba9e43102Feb694EE',
+    splitMain: SPLIT_MAIN,
   },
-};
+} as const;
 
-export const abis: { [key: string]: any } = {
+export const abis = {
   ArtistCreator: rinkeby_ArtistCreator.abi,
   Artist: Artist.abi,
-};
+} as const;
