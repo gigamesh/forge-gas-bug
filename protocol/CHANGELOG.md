@@ -1,5 +1,11 @@
 # @soundxyz/protocol
 
+## 6.0.0
+
+### Major Changes
+
+- a8d9f88: Updates protocol addresses object to use env as key
+
 ## 5.1.0
 
 ### Minor Changes
