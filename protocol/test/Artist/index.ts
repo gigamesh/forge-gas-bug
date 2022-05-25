@@ -1,8 +1,5 @@
 import '@nomiclabs/hardhat-ethers';
 
-import chai from 'chai';
-import { solidity } from 'ethereum-waffle';
-
 import Config from '../Config';
 import { deployArtistImplementation, deployArtistProxy } from '../helpers';
 import { buyEditionTests } from './buyEdition';
@@ -23,8 +20,6 @@ import {
 } from './others';
 import { setEndTimeTests, setStartTimeTests } from './timing';
 import { withdrawFundsTests } from './withdrawFunds';
-
-chai.use(solidity);
 
 describe('Artist prototype', () => {
   const config = new Config(deployArtistImplementation);

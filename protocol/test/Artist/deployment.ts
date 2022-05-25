@@ -1,9 +1,12 @@
-import { expect } from 'chai';
+import chai, { expect } from 'chai';
+import { solidity } from 'ethereum-waffle';
 import { BigNumber } from 'ethers';
 import { ethers } from 'hardhat';
 
 import Config from '../Config';
 import { getRandomInt } from '../helpers';
+
+chai.use(solidity);
 
 export function deploymentTests(config: Config) {
   const { setUpContract, EXAMPLE_ARTIST_NAME, EXAMPLE_ARTIST_SYMBOL } = config;
