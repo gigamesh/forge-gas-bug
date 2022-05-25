@@ -1,4 +1,4 @@
-lockfileVersion: 5.3
+lockfileVersion: 5.4
 
 importers:
 
@@ -108,7 +108,7 @@ importers:
       chai: ^4.2.0
       dotenv: ^16.0.0
       esbuild: ^0.14.19
-      ethereum-waffle: ^3.0.0
+      ethereum-waffle: ^3.4.0
       ethers: ^5.4.7
       fs-extra: ^10.0.0
       hardhat: ^2.6.4
@@ -129,14 +129,14 @@ importers:
       '@nomiclabs/hardhat-ethers': /hardhat-deploy-ethers/0.3.0-beta.11_ethers@5.5.4+hardhat@2.8.3
       '@nomiclabs/hardhat-etherscan': 2.1.8_hardhat@2.8.3
       '@nomiclabs/hardhat-solhint': 2.0.0_hardhat@2.8.3
-      '@nomiclabs/hardhat-waffle': 2.0.2_ad0a3b49f50f25978300d3ef5b96809f
+      '@nomiclabs/hardhat-waffle': 2.0.2_vufdwspvb4szpaya2pxvxfuat4
       '@openzeppelin/contracts': 4.4.2
       '@openzeppelin/contracts-upgradeable': 4.4.2
-      '@openzeppelin/hardhat-upgrades': 1.13.0_46c3ffff47883972a1e35207fcbef6af
+      '@openzeppelin/hardhat-upgrades': 1.13.0_i3b7772hra4xfipdkid7zpxwv4
       '@rari-capital/solmate': 6.2.0
       '@soundxyz/common': link:../common
-      '@typechain/ethers-v5': 7.2.0_735b968b44a6c221b96116af13476280
-      '@typechain/hardhat': 2.3.1_8bf6734c2567d3cb3114a02e15dff728
+      '@typechain/ethers-v5': 7.2.0_onnznc2eu3bcdolbc2xrgr3cqa
+      '@typechain/hardhat': 2.3.1_rp3hgtbfm7j4wmiuuaxblx7xfa
       dotenv: 16.0.0
       ethereum-waffle: 3.4.0_typescript@4.5.5
       ethers: 5.5.4
@@ -158,13 +158,13 @@ importers:
       '@types/mocha': 9.1.0
       '@types/node': 17.0.15
       '@types/prettier': 2.4.3
-      bob-tsm: 0.4.6_esbuild@0.14.19+typescript@4.5.5
+      bob-tsm: 0.4.6_pmzbkdzkrqawuncvdwijzoyoaa
       chai: 4.3.6
       esbuild: 0.14.19
       fs-extra: 10.0.0
       prettier: 2.5.1
       prettier-plugin-solidity: 1.0.0-beta.19_prettier@2.5.1
-      solhint-plugin-prettier: 0.0.5_1c1557892bfe35086b1a76384ba83b44
+      solhint-plugin-prettier: 0.0.5_dqkvpcjl7y2qq2y2oy4exkb3iq
       ts-generator: 0.1.1
       typescript: 4.5.5
 
@@ -953,7 +953,7 @@ packages:
       - supports-color
     dev: false
 
-  /@nomiclabs/hardhat-waffle/2.0.2_ad0a3b49f50f25978300d3ef5b96809f:
+  /@nomiclabs/hardhat-waffle/2.0.2_vufdwspvb4szpaya2pxvxfuat4:
     resolution: {integrity: sha512-dnhry6Bj15O8L3pBksTuXfr4RAUIf+BxRxWJXiu+ioSawcQaOcNF4gfMxn6ik0auk3zrsAJLA6m9vqe87d4xvg==}
     peerDependencies:
       '@nomiclabs/hardhat-ethers': ^2.0.0
@@ -977,7 +977,7 @@ packages:
     resolution: {integrity: sha512-NyJV7sJgoGYqbtNUWgzzOGW4T6rR19FmX1IJgXGdapGPWsuMelGJn9h03nos0iqfforCbCB0iYIR0MtIuIFLLw==}
     dev: false
 
-  /@openzeppelin/hardhat-upgrades/1.13.0_46c3ffff47883972a1e35207fcbef6af:
+  /@openzeppelin/hardhat-upgrades/1.13.0_i3b7772hra4xfipdkid7zpxwv4:
     resolution: {integrity: sha512-0pSSUimzd4JL/mKhdNcczDGhv6ELPcI8cWWyCYjTwKoI3wL+AnRrbIQ+yrpHVpia3dAmI/+1sLOz70HvFKNzNQ==}
     hasBin: true
     peerDependencies:
@@ -1276,7 +1276,7 @@ packages:
       - utf-8-validate
     dev: false
 
-  /@typechain/ethers-v5/7.2.0_735b968b44a6c221b96116af13476280:
+  /@typechain/ethers-v5/7.2.0_onnznc2eu3bcdolbc2xrgr3cqa:
     resolution: {integrity: sha512-jfcmlTvaaJjng63QsT49MT6R1HFhtO/TBMWbyzPFSzMmVIqb2tL6prnKBs4ZJrSvmgIXWy+ttSjpaxCTq8D/Tw==}
     peerDependencies:
       '@ethersproject/abi': ^5.0.0
@@ -1294,7 +1294,7 @@ packages:
       typescript: 4.5.5
     dev: false
 
-  /@typechain/hardhat/2.3.1_8bf6734c2567d3cb3114a02e15dff728:
+  /@typechain/hardhat/2.3.1_rp3hgtbfm7j4wmiuuaxblx7xfa:
     resolution: {integrity: sha512-BQV8OKQi0KAzLXCdsPO0pZBNQQ6ra8A2ucC26uFX/kquRBtJu1yEyWnVSmtr07b5hyRoJRpzUeINLnyqz4/MAw==}
     peerDependencies:
       hardhat: ^2.0.10
@@ -2534,6 +2534,23 @@ packages:
     dev: true
 
   /bob-tsm/0.4.6_esbuild@0.14.19+typescript@4.5.5:
+    resolution: {integrity: sha512-CrNjbphPfTiK73CFczwGpF15THOe7/glwF9Yu+24yy1dsZyB803LBzJ26MEAXFGy0x7ni1OqpogVB8LYDmZQaA==}
+    engines: {node: ^12.20.0 || >=14.13.0}
+    hasBin: true
+    peerDependencies:
+      esbuild: '>=0.14.13'
+      typescript: '>=4.1.2'
+    peerDependenciesMeta:
+      typescript:
+        optional: true
+    dependencies:
+      esbuild: 0.14.19
+      typescript: 4.5.5
+    optionalDependencies:
+      fsevents: 2.3.2
+    dev: true
+
+  /bob-tsm/0.4.6_pmzbkdzkrqawuncvdwijzoyoaa:
     resolution: {integrity: sha512-CrNjbphPfTiK73CFczwGpF15THOe7/glwF9Yu+24yy1dsZyB803LBzJ26MEAXFGy0x7ni1OqpogVB8LYDmZQaA==}
     engines: {node: ^12.20.0 || >=14.13.0}
     hasBin: true
@@ -9189,7 +9206,7 @@ packages:
       - debug
     dev: false
 
-  /solhint-plugin-prettier/0.0.5_1c1557892bfe35086b1a76384ba83b44:
+  /solhint-plugin-prettier/0.0.5_dqkvpcjl7y2qq2y2oy4exkb3iq:
     resolution: {integrity: sha512-7jmWcnVshIrO2FFinIvDQmhQpfpS2rRRn3RejiYgnjIE68xO2bvrYvjqVNfrio4xH9ghOqn83tKuTzLjEbmGIA==}
     peerDependencies:
       prettier: ^1.15.0 || ^2.0.0
