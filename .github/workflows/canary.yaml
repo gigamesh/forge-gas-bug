@@ -1,6 +1,10 @@
 name: Canary Release
 
 on:
+  workflow_run:
+    workflows: ['Continuous Integration']
+    types:
+      - completed
   pull_request:
     branches:
       - main
