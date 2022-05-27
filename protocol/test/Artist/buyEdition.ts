@@ -158,7 +158,7 @@ export function buyEditionTests(config: Config) {
       startTime: BigNumber.from(currentSeconds() + 99999999),
     });
 
-    const wrongArtistContract = await deployArtistProxy(miscAccounts[0], soundOwner);
+    const wrongArtistContract = await deployArtistProxy({ artistAccount: miscAccounts[0], soundOwner });
     const buyer = miscAccounts[1];
     const ticketNumber = '0';
     const signature = await getPresaleSignature({

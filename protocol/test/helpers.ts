@@ -4,6 +4,8 @@ import { BigNumber, Contract } from 'ethers';
 import { ethers, waffle } from 'hardhat';
 import { SplitMain__factory } from '../typechain';
 
+export type DeployArtistFn = typeof deployArtistImplementation | typeof deployArtistProxy;
+
 const { getAuthSignature } = helpers;
 const { provider } = waffle;
 
@@ -71,28 +73,36 @@ export async function createEdition({
   return await artistContract.connect(artistAccount).createEdition(...editionArgs);
 }
 
-export const currentSeconds = () => Math.floor(Date.now() / 1000);
-export const getRandomInt = (min = 0, max = MAX_UINT32) => {
+export function currentSeconds() {
+  return Math.floor(Date.now() / 1000);
+}
+
+export function getRandomInt(min = 0, max = MAX_UINT32) {
   min = Math.ceil(min);
   max = Math.floor(max);
   return Math.floor(Math.random() * (max - min + 1)) + min;
-};
-export const getRandomBN = (max?: number) => {
+}
+
+export function getRandomBN(max?: number) {
   const rando = BigNumber.from(ethers.utils.randomBytes(4));
   if (max) {
     return rando.mod(max.toString());
   }
   return rando;
-};
+}
 
-export const deployArtistImplementation = async (deployer: SignerWithAddress) => {
+export function getRandomAddress() {
+  return ethers.Wallet.fromMnemonic(process.env.MNEMONIC, `m/44'/60'/0'/0/${getRandomInt(0, 10000)}`).address;
+}
+
+export async function deployArtistImplementation({ artistAccount }: { artistAccount: SignerWithAddress }) {
   const Artist = await ethers.getContractFactory('ArtistV4');
 
-  const protoArtist = await Artist.connect(deployer).deploy();
+  const protoArtist = await Artist.connect(artistAccount).deploy();
   await protoArtist.deployed();
 
   await protoArtist.initialize(
-    deployer.address,
+    artistAccount.address,
     EXAMPLE_ARTIST_ID,
     EXAMPLE_ARTIST_NAME,
     EXAMPLE_ARTIST_SYMBOL,
@@ -100,11 +110,20 @@ export const deployArtistImplementation = async (deployer: SignerWithAddress) =>
   );
 
   return protoArtist;
-};
+}
 
-export const deployArtistProxy = async (artistAccount: SignerWithAddress, soundOwner: SignerWithAddress) => {
+export async function deployArtistProxy({
+  artistAccount,
+  soundOwner,
+  artistCreatorVersion,
+}: {
+  artistAccount: SignerWithAddress;
+  soundOwner: SignerWithAddress;
+  artistCreatorVersion?: number;
+}) {
   // Deploy & initialize ArtistCreator
-  const ArtistCreator = await ethers.getContractFactory('ArtistCreator');
+  const artistCreatorName = `ArtistCreator${artistCreatorVersion ? 'V' + artistCreatorVersion : ''}`;
+  const ArtistCreator = await ethers.getContractFactory(artistCreatorName);
   const artistCreator = await ArtistCreator.connect(soundOwner).deploy();
   await artistCreator.initialize();
   await artistCreator.deployed();
@@ -136,13 +155,13 @@ export const deployArtistProxy = async (artistAccount: SignerWithAddress, soundO
   const contractAddress = receipt.events[3].args.artistAddress;
 
   return ethers.getContractAt('ArtistV4', contractAddress);
-};
+}
 
 // shifts edition id to the left by 128 bits and adds the token id in the bottom bits
-export const getTokenId = (editionId: number | string, numSold: number | string) => {
+export function getTokenId(editionId: number | string, numSold: number | string) {
   const shiftFactor = BigNumber.from(1).mul(2).pow(128);
   return BigNumber.from(editionId).mul(shiftFactor).add(numSold);
-};
+}
 
 export async function createSplit({ splitMainAddress, splitInfo }: { splitMainAddress; splitInfo: SplitInfo }) {
   const { accounts, percentAllocations, distributorFee, controller } = splitInfo;

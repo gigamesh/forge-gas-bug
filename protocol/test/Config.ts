@@ -3,7 +3,7 @@ import { BigNumber } from 'ethers';
 import { parseEther } from 'ethers/lib/utils';
 import { ethers, waffle } from 'hardhat';
 
-import { createEdition, getRandomBN } from './helpers';
+import { createEdition, getRandomBN, DeployArtistFn } from './helpers';
 
 type CustomMintArgs = {
   quantity?: BigNumber;
@@ -21,7 +21,7 @@ type CustomMintArgs = {
 class Config {
   isInitialized = false;
   provider = waffle.provider;
-  deployContract: Function;
+  deployContract: DeployArtistFn;
   fundingRecipient: SignerWithAddress;
 
   EDITION_ID = '1';
@@ -47,7 +47,7 @@ class Config {
     const signers = await ethers.getSigners();
     const [soundOwner, artistAccount, ...miscAccounts] = signers;
 
-    const artistContract = await this.deployContract(artistAccount, soundOwner);
+    const artistContract = await this.deployContract({ artistAccount, soundOwner });
 
     const price = customConfig.price || parseEther('0.1');
     const quantity = customConfig.quantity || getRandomBN();
