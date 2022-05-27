@@ -2,7 +2,7 @@ import { expect } from 'chai';
 import { BigNumber } from 'ethers';
 
 import Config from '../Config';
-import { currentSeconds } from '../helpers';
+import { currentSeconds, createEdition } from '../helpers';
 
 export function createEditionTests(config: Config) {
   const { setUpContract, EDITION_ID, MAX_UINT32, NULL_ADDRESS } = config;
@@ -62,9 +62,10 @@ export function createEditionTests(config: Config) {
       await setUpContract();
 
     for (const notOwner of miscAccounts) {
-      const tx = artistContract
-        .connect(notOwner)
-        .createEdition(
+      const tx = createEdition({
+        artistContract,
+        artistAccount: notOwner,
+        editionArgs: [
           notOwner.address,
           price,
           quantity,
@@ -72,8 +73,9 @@ export function createEditionTests(config: Config) {
           startTime,
           endTime,
           permissionedQuantity,
-          notOwner.address
-        );
+          notOwner.address,
+        ],
+      });
       await expect(tx).to.be.revertedWith('Ownable: caller is not the owner');
     }
   });
@@ -86,9 +88,10 @@ export function createEditionTests(config: Config) {
     const quantity = BigNumber.from(25);
     const startTime = BigNumber.from(currentSeconds() + 99999999);
 
-    const tx = await artistContract
-      .connect(artistAccount)
-      .createEdition(
+    const tx = await createEdition({
+      artistContract,
+      artistAccount,
+      editionArgs: [
         artistAccount.address,
         price,
         quantity,
@@ -96,8 +99,9 @@ export function createEditionTests(config: Config) {
         startTime,
         endTime,
         permissionedQuantity,
-        soundOwner.address
-      );
+        soundOwner.address,
+      ],
+    });
 
     const receipt = await tx.wait();
 
@@ -118,9 +122,10 @@ export function createEditionTests(config: Config) {
     } = await setUpContract({ skipCreateEditions: true });
 
     const quantity = BigNumber.from(0);
-    const tx = artistContract
-      .connect(artistAccount)
-      .createEdition(
+    const tx = createEdition({
+      artistContract,
+      artistAccount,
+      editionArgs: [
         fundingRecipient.address,
         price,
         quantity,
@@ -128,8 +133,9 @@ export function createEditionTests(config: Config) {
         startTime,
         endTime,
         permissionedQuantity,
-        signerAddress
-      );
+        signerAddress,
+      ],
+    });
 
     await expect(tx).to.be.revertedWith('Must set quantity');
   });
@@ -148,9 +154,10 @@ export function createEditionTests(config: Config) {
     } = await setUpContract({ skipCreateEditions: true });
 
     const fundingRecipient = NULL_ADDRESS;
-    const tx = artistContract
-      .connect(artistAccount)
-      .createEdition(
+    const tx = createEdition({
+      artistContract,
+      artistAccount,
+      editionArgs: [
         fundingRecipient,
         price,
         quantity,
@@ -158,8 +165,9 @@ export function createEditionTests(config: Config) {
         startTime,
         endTime,
         permissionedQuantity,
-        signerAddress
-      );
+        signerAddress,
+      ],
+    });
 
     await expect(tx).to.be.revertedWith('Must set fundingRecipient');
   });
@@ -179,9 +187,10 @@ export function createEditionTests(config: Config) {
     const startTime = BigNumber.from(1);
     const endTime = BigNumber.from(0);
 
-    const tx = artistContract
-      .connect(artistAccount)
-      .createEdition(
+    const tx = createEdition({
+      artistContract,
+      artistAccount,
+      editionArgs: [
         fundingRecipient.address,
         price,
         quantity,
@@ -189,8 +198,9 @@ export function createEditionTests(config: Config) {
         startTime,
         endTime,
         permissionedQuantity,
-        signerAddress
-      );
+        signerAddress,
+      ],
+    });
 
     await expect(tx).to.be.revertedWith('End time must be greater than start time');
   });
@@ -200,9 +210,11 @@ export function createEditionTests(config: Config) {
       skipCreateEditions: true,
     });
 
-    const tx = artistContract
-      .connect(artistAccount)
-      .createEdition(artistAccount.address, price, 2, royaltyBPS, startTime, endTime, 1, NULL_ADDRESS);
+    const tx = createEdition({
+      artistContract,
+      artistAccount,
+      editionArgs: [artistAccount.address, price, 2, royaltyBPS, startTime, endTime, 1, NULL_ADDRESS],
+    });
 
     await expect(tx).to.revertedWith('Signer address cannot be 0');
   });

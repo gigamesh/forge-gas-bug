@@ -3,7 +3,7 @@ import { BigNumber } from 'ethers';
 import { parseEther } from 'ethers/lib/utils';
 import { ethers, waffle } from 'hardhat';
 
-import { getRandomBN } from './helpers';
+import { createEdition, getRandomBN } from './helpers';
 
 type CustomMintArgs = {
   quantity?: BigNumber;
@@ -55,16 +55,17 @@ class Config {
     const startTime = customConfig.startTime || BigNumber.from(0x0); // default to start of unix epoch
     const endTime = customConfig.endTime || BigNumber.from(this.MAX_UINT32);
     const fundingRecipient = customConfig.fundingRecipient || artistAccount;
-    const permissionedQuantity = customConfig.permissionedQuantity || 0;
+    const permissionedQuantity = customConfig.permissionedQuantity || BigNumber.from(0);
     const signerAddress = customConfig.signer === null ? this.NULL_ADDRESS : soundOwner.address;
 
     let eventData;
 
     if (!customConfig.skipCreateEditions) {
       for (let i = 0; i < editionCount; i++) {
-        const createEditionTx = await artistContract
-          .connect(artistAccount)
-          .createEdition(
+        const createEditionTx = await createEdition({
+          artistContract,
+          artistAccount,
+          editionArgs: [
             fundingRecipient.address,
             price,
             quantity,
@@ -72,8 +73,9 @@ class Config {
             startTime,
             endTime,
             permissionedQuantity,
-            signerAddress
-          );
+            signerAddress,
+          ],
+        });
 
         const editionReceipt = await createEditionTx.wait();
         const contractEvent = artistContract.interface.parseLog(editionReceipt.events[0]);

@@ -2,6 +2,7 @@ import { SignerWithAddress } from '@nomiclabs/hardhat-ethers/dist/src/signers';
 import { helpers } from '@soundxyz/common';
 import { BigNumber, Contract } from 'ethers';
 import { ethers, waffle } from 'hardhat';
+import { SplitMain__factory } from '../typechain';
 
 const { getAuthSignature } = helpers;
 const { provider } = waffle;
@@ -19,6 +20,13 @@ export const INVALID_PRIVATE_KEY = '0xb73249a6bf495f81385ce91b84cc2eff129011fea4
 export const NULL_TICKET_NUM = '0x0';
 
 //========= Helpers ==========//
+
+type SplitInfo = {
+  accounts: string[];
+  percentAllocations: number[];
+  distributorFee: number;
+  controller: string;
+};
 
 export async function createArtist(
   artistCreator: Contract,
@@ -38,6 +46,29 @@ export async function createArtist(
   });
 
   return artistCreator.connect(signer).createArtist(signature, artistName, symbol, baseURI);
+}
+
+export type EditionArgs = [
+  string, // fundingRecipient
+  number | BigNumber, // price
+  number | BigNumber, // quantity
+  number | BigNumber, // royaltyBPS
+  number | BigNumber, // startTime
+  number | BigNumber, // endTime
+  (number | BigNumber)?, // permissionQuantity
+  (string | undefined)? // signerAddress
+];
+
+export async function createEdition({
+  artistContract,
+  artistAccount,
+  editionArgs,
+}: {
+  artistContract: Contract;
+  artistAccount: SignerWithAddress;
+  editionArgs: EditionArgs;
+}) {
+  return await artistContract.connect(artistAccount).createEdition(...editionArgs);
 }
 
 export const currentSeconds = () => Math.floor(Date.now() / 1000);
@@ -112,3 +143,19 @@ export const getTokenId = (editionId: number | string, numSold: number | string)
   const shiftFactor = BigNumber.from(1).mul(2).pow(128);
   return BigNumber.from(editionId).mul(shiftFactor).add(numSold);
 };
+
+export async function createSplit({ splitMainAddress, splitInfo }: { splitMainAddress; splitInfo: SplitInfo }) {
+  const { accounts, percentAllocations, distributorFee, controller } = splitInfo;
+
+  const splitMain = await SplitMain__factory.connect(splitMainAddress, provider);
+  const tx = await splitMain.createSplit(accounts, percentAllocations, distributorFee, controller);
+
+  const receipt = await tx.wait();
+  const splitAddress = receipt.events.find((e) => e.event === 'CreateSplit').args.split;
+
+  if (!splitAddress) {
+    throw new Error('Split address not found in event logs');
+  }
+
+  return splitAddress;
+}
