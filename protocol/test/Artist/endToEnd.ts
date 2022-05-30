@@ -2,13 +2,11 @@ import { helpers as commonHelpers } from '@soundxyz/common';
 import { expect } from 'chai';
 import { BigNumber } from 'ethers';
 
-import Config from '../Config';
+import { EDITION_ID, EMPTY_SIGNATURE, provider, setUpContract } from '../helpers';
 
 const { getPresaleSignature } = commonHelpers;
 
-export async function endToEndTests(config: Config) {
-  const { setUpContract, provider, EDITION_ID, EMPTY_SIGNATURE } = config;
-
+export async function endToEndTests() {
   it(`successfully buys during public sale, and successfully withdraws`, async () => {
     const quantity = 10;
     const { artistContract, fundingRecipient, price, miscAccounts, soundOwner } = await setUpContract({

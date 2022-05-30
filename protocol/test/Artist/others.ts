@@ -1,16 +1,31 @@
 import { helpers as commonHelpers } from '@soundxyz/common';
-import { expect } from 'chai';
+import chai, { expect } from 'chai';
+import { solidity } from 'ethereum-waffle';
 import { BigNumber } from 'ethers';
 import { ethers } from 'hardhat';
 
-import Config from '../Config';
-import { currentSeconds, getRandomBN, getRandomInt, getTokenId, MAX_UINT32 } from '../helpers';
+import {
+  BASE_URI,
+  CHAIN_ID,
+  currentSeconds,
+  EDITION_ID,
+  EMPTY_SIGNATURE,
+  EXAMPLE_ARTIST_ID,
+  getRandomBN,
+  getRandomInt,
+  getTokenId,
+  MAX_UINT32,
+  NULL_ADDRESS,
+  NULL_TICKET_NUM,
+  provider,
+  setUpContract,
+} from '../helpers';
+
+chai.use(solidity);
 
 const { getPresaleSignature } = commonHelpers;
 
-export function setSignerAddressTests(config: Config) {
-  const { setUpContract, EDITION_ID, NULL_ADDRESS } = config;
-
+export function setSignerAddressTests() {
   it('only allows owner to call function', async () => {
     const { artistContract, miscAccounts } = await setUpContract();
 
@@ -52,9 +67,7 @@ export function setSignerAddressTests(config: Config) {
   });
 }
 
-export function setPermissionedQuantityTests(config: Config) {
-  const { setUpContract, EDITION_ID } = config;
-
+export function setPermissionedQuantityTests() {
   it('only allows owner to call function', async () => {
     const { artistContract, miscAccounts } = await setUpContract();
     const notOwner = miscAccounts[0];
@@ -103,9 +116,7 @@ export function setPermissionedQuantityTests(config: Config) {
   });
 }
 
-export async function getApprovedTests(config: Config) {
-  const { setUpContract, EDITION_ID, EMPTY_SIGNATURE, NULL_TICKET_NUM } = config;
-
+export async function getApprovedTests() {
   it('returns the receiver address', async () => {
     const TOKEN_COUNT = '1';
     const { artistContract, miscAccounts, price } = await setUpContract();
@@ -123,9 +134,7 @@ export async function getApprovedTests(config: Config) {
   });
 }
 
-export async function transferFromTests(config: Config) {
-  const { setUpContract, EDITION_ID, EMPTY_SIGNATURE, NULL_TICKET_NUM } = config;
-
+export async function transferFromTests() {
   it('reverts when not approved', async () => {
     const { price, artistContract, miscAccounts } = await setUpContract();
 
@@ -166,9 +175,7 @@ export async function transferFromTests(config: Config) {
   });
 }
 
-export async function totalSupplyTests(config: Config) {
-  const { setUpContract, EMPTY_SIGNATURE, NULL_TICKET_NUM } = config;
-
+export async function totalSupplyTests() {
   it('returns correct total supply', async () => {
     const totalQuantity = 30;
     const editionCount = 3;
@@ -191,9 +198,7 @@ export async function totalSupplyTests(config: Config) {
   });
 }
 
-export async function contractURITests(config: Config) {
-  const { setUpContract, BASE_URI, EXAMPLE_ARTIST_ID } = config;
-
+export async function contractURITests() {
   it('returns expected URI', async () => {
     const { artistContract } = await setUpContract();
 
@@ -203,9 +208,7 @@ export async function contractURITests(config: Config) {
   });
 }
 
-export async function royaltyInfoTests(config: Config) {
-  const { provider, setUpContract, NULL_ADDRESS, EDITION_ID, CHAIN_ID } = config;
-
+export async function royaltyInfoTests() {
   it('returns no royalty info for non-existent token', async () => {
     const { artistContract } = await setUpContract();
 
@@ -257,9 +260,7 @@ export async function royaltyInfoTests(config: Config) {
   });
 }
 
-export async function editionCountTests(config: Config) {
-  const { setUpContract } = config;
-
+export async function editionCountTests() {
   it('returns the correct number of editions', async () => {
     const editionCount = 42;
     const { artistContract } = await setUpContract({ editionCount });
@@ -270,9 +271,7 @@ export async function editionCountTests(config: Config) {
   });
 }
 
-export async function ownersOfTokenIdsTests(config: Config) {
-  const { setUpContract, EMPTY_SIGNATURE, EDITION_ID } = config;
-
+export async function ownersOfTokenIdsTests() {
   it('returns the correct list of owners', async () => {
     const editionQuantity = 10;
     const editionCount = 3;
@@ -314,9 +313,7 @@ export async function ownersOfTokenIdsTests(config: Config) {
   });
 }
 
-export function checkTicketNumbersTests(config: Config) {
-  const { setUpContract, EMPTY_SIGNATURE, EDITION_ID, CHAIN_ID, provider } = config;
-
+export function checkTicketNumbersTests() {
   it('returns correct list of booleans corresponding to a given list of claimed or unclaimed ticket numbers', async () => {
     const editionQuantity = 10;
     const { miscAccounts, artistContract, price } = await setUpContract({

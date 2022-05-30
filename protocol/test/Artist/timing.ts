@@ -1,11 +1,8 @@
 import { expect } from 'chai';
 
-import Config from '../Config';
-import { currentSeconds } from '../helpers';
+import { currentSeconds, EDITION_ID, setUpContract } from '../helpers';
 
-export function setStartTimeTests(config: Config) {
-  const { setUpContract, EDITION_ID } = config;
-
+export function setStartTimeTests() {
   const newTime = currentSeconds() + 100;
 
   it('only allows owner to call function', async () => {
@@ -40,9 +37,7 @@ export function setStartTimeTests(config: Config) {
   });
 }
 
-export function setEndTimeTests(config: Config) {
-  const { setUpContract, EDITION_ID } = config;
-
+export function setEndTimeTests() {
   const newTime = currentSeconds() + 100;
 
   it('only allows owner to call function', async () => {

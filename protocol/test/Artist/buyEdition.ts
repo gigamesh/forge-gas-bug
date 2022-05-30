@@ -3,25 +3,25 @@ import { expect } from 'chai';
 import { BigNumber } from 'ethers';
 import { ethers } from 'hardhat';
 
-import Config from '../Config';
-import { currentSeconds, deployArtistProxy, getTokenId } from '../helpers';
+import {
+  BASE_URI,
+  CHAIN_ID,
+  currentSeconds,
+  deployArtistProxy,
+  EDITION_ID,
+  EMPTY_SIGNATURE,
+  EXAMPLE_ARTIST_ID,
+  getTokenId,
+  INVALID_PRIVATE_KEY,
+  MAX_UINT32,
+  NULL_TICKET_NUM,
+  provider,
+  setUpContract,
+} from '../helpers';
 
 const { getPresaleSignature } = commonHelpers;
 
-export function buyEditionTests(config: Config) {
-  const {
-    setUpContract,
-    provider,
-    EDITION_ID,
-    MAX_UINT32,
-    EXAMPLE_ARTIST_ID,
-    BASE_URI,
-    EMPTY_SIGNATURE,
-    INVALID_PRIVATE_KEY,
-    NULL_TICKET_NUM,
-    CHAIN_ID,
-  } = config;
-
+export function buyEditionTests() {
   it(`reverts with "Edition does not exist" when expected`, async () => {
     const { artistContract, price, miscAccounts } = await setUpContract();
 

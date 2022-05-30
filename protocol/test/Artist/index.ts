@@ -1,7 +1,5 @@
 import '@nomiclabs/hardhat-ethers';
 
-import Config from '../Config';
-import { deployArtistImplementation, deployArtistProxy } from '../helpers';
 import { buyEditionTests } from './buyEdition';
 import { createEditionTests } from './createEdition';
 import { deploymentTests } from './deployment';
@@ -21,82 +19,72 @@ import {
 import { setEndTimeTests, setStartTimeTests } from './timing';
 import { withdrawFundsTests } from './withdrawFunds';
 
-describe('Artist prototype', () => {
-  const config = new Config(deployArtistImplementation);
-  testArtistContract(config);
-});
-
 describe('Artist proxy', () => {
-  const config = new Config(deployArtistProxy);
-  testArtistContract(config);
-});
-
-function testArtistContract(config: Config) {
   describe('deployment', () => {
-    deploymentTests(config);
+    deploymentTests();
   });
 
   describe('createEdition', () => {
-    createEditionTests(config);
+    createEditionTests();
   });
 
   describe('buyEdition', () => {
-    buyEditionTests(config);
+    buyEditionTests();
   });
 
   describe('withdrawFunds', () => {
-    withdrawFundsTests(config);
+    withdrawFundsTests();
   });
 
   describe('setStartTime', () => {
-    setStartTimeTests(config);
+    setStartTimeTests();
   });
 
   describe('setEndTime', () => {
-    setEndTimeTests(config);
+    setEndTimeTests();
   });
 
   describe('setSignerAddress', () => {
-    setSignerAddressTests(config);
+    setSignerAddressTests();
   });
 
   describe('setPermissionedQuantity', () => {
-    setPermissionedQuantityTests(config);
+    setPermissionedQuantityTests();
   });
 
   describe('getApproved', () => {
-    getApprovedTests(config);
+    getApprovedTests();
   });
 
   describe('transferFrom', () => {
-    transferFromTests(config);
+    transferFromTests();
   });
 
   describe('totalSupply', () => {
-    totalSupplyTests(config);
+    totalSupplyTests();
   });
 
   describe('contractURI', () => {
-    contractURITests(config);
+    contractURITests();
   });
 
   describe('royaltyInfo', () => {
-    royaltyInfoTests(config);
+    royaltyInfoTests();
   });
 
   describe('editionCount', () => {
-    editionCountTests(config);
+    editionCountTests();
   });
 
   describe('ownersOfTokenIds', () => {
-    ownersOfTokenIdsTests(config);
+    ownersOfTokenIdsTests();
   });
 
   describe('checkTicketNumbers', () => {
-    checkTicketNumbersTests(config);
+    checkTicketNumbersTests();
   });
 
   describe('end-to-end tests', () => {
-    endToEndTests(config);
+    endToEndTests();
   });
-}
+});

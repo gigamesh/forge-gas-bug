@@ -1,11 +1,9 @@
 import { expect } from 'chai';
 import { BigNumber } from 'ethers';
 
-import Config from '../Config';
+import { EDITION_ID, EMPTY_SIGNATURE, NULL_TICKET_NUM, provider, setUpContract } from '../helpers';
 
-export async function withdrawFundsTests(config: Config) {
-  const { provider, setUpContract, EMPTY_SIGNATURE, NULL_TICKET_NUM, EDITION_ID } = config;
-
+export async function withdrawFundsTests() {
   it('transfers edition funds to the fundingRecipient', async () => {
     const quantity = 10;
     const { fundingRecipient, artistContract, price, miscAccounts, soundOwner } = await setUpContract({

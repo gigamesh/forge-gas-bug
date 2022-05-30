@@ -3,14 +3,11 @@ import { solidity } from 'ethereum-waffle';
 import { BigNumber } from 'ethers';
 import { ethers } from 'hardhat';
 
-import Config from '../Config';
-import { getRandomInt } from '../helpers';
+import { EXAMPLE_ARTIST_NAME, EXAMPLE_ARTIST_SYMBOL, getRandomInt, setUpContract } from '../helpers';
 
 chai.use(solidity);
 
-export function deploymentTests(config: Config) {
-  const { setUpContract, EXAMPLE_ARTIST_NAME, EXAMPLE_ARTIST_SYMBOL } = config;
-
+export function deploymentTests() {
   it('deploys contract with basic attributes', async () => {
     const { artistContract } = await setUpContract();
     await expect(await artistContract.name()).to.eq(EXAMPLE_ARTIST_NAME);

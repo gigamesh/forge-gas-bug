@@ -1,12 +1,9 @@
 import { expect } from 'chai';
 import { BigNumber } from 'ethers';
 
-import Config from '../Config';
-import { currentSeconds, createEdition } from '../helpers';
+import { createEdition, currentSeconds, EDITION_ID, MAX_UINT32, NULL_ADDRESS, setUpContract } from '../helpers';
 
-export function createEditionTests(config: Config) {
-  const { setUpContract, EDITION_ID, MAX_UINT32, NULL_ADDRESS } = config;
-
+export function createEditionTests() {
   it(`event logs return correct info`, async () => {
     const {
       eventData,

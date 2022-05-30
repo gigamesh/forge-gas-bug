@@ -1,15 +1,18 @@
 import { SignerWithAddress } from '@nomiclabs/hardhat-ethers/dist/src/signers';
 import { helpers } from '@soundxyz/common';
 import { BigNumber, Contract } from 'ethers';
+import { parseEther } from 'ethers/lib/utils';
 import { ethers, waffle } from 'hardhat';
+
 import { SplitMain__factory } from '../typechain';
 
-export type DeployArtistFn = typeof deployArtistImplementation | typeof deployArtistProxy;
+export type DeployArtistFn = typeof deployArtistProxy;
 
 const { getAuthSignature } = helpers;
-const { provider } = waffle;
+export const { provider } = waffle;
 
 //========== Constants =========//
+
 export const MAX_UINT32 = 4294967295;
 export const EXAMPLE_ARTIST_NAME = 'Alpha & Omega';
 export const EXAMPLE_ARTIST_ID = 1;
@@ -20,8 +23,10 @@ export const EMPTY_SIGNATURE =
   '0x00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000';
 export const INVALID_PRIVATE_KEY = '0xb73249a6bf495f81385ce91b84cc2eff129011fea429ba7f1827d73b06390208';
 export const NULL_TICKET_NUM = '0x0';
+export const CHAIN_ID = 1337;
+export const EDITION_ID = '1';
 
-//========= Helpers ==========//
+//========= Types ==========//
 
 type SplitInfo = {
   accounts: string[];
@@ -29,6 +34,22 @@ type SplitInfo = {
   distributorFee: number;
   controller: string;
 };
+
+type CustomMintArgs = {
+  quantity?: BigNumber;
+  price?: BigNumber;
+  startTime?: BigNumber;
+  endTime?: BigNumber;
+  editionCount?: number;
+  royaltyBPS?: BigNumber;
+  fundingRecipient?: SignerWithAddress;
+  permissionedQuantity?: BigNumber;
+  skipCreateEditions?: boolean;
+  signer?: SignerWithAddress;
+  artistContractType?: 'IMPLEMENTATION' | 'PROXY';
+};
+
+//========= Helpers ==========//
 
 export async function createArtist(
   artistCreator: Contract,
@@ -177,4 +198,67 @@ export async function createSplit({ splitMainAddress, splitInfo }: { splitMainAd
   }
 
   return splitAddress;
+}
+
+export async function setUpContract(customConfig: CustomMintArgs = {}) {
+  const editionCount = customConfig.editionCount || 1;
+
+  const signers = await ethers.getSigners();
+  const [soundOwner, artistAccount, ...miscAccounts] = signers;
+
+  const artistContract = await (customConfig.artistContractType === 'IMPLEMENTATION'
+    ? deployArtistImplementation({ artistAccount })
+    : deployArtistProxy({ artistAccount, soundOwner }));
+
+  const price = customConfig.price || parseEther('0.1');
+  const quantity = customConfig.quantity || getRandomBN();
+  const royaltyBPS = customConfig.royaltyBPS || BigNumber.from(0);
+  const startTime = customConfig.startTime || BigNumber.from(0x0); // default to start of unix epoch
+  const endTime = customConfig.endTime || BigNumber.from(MAX_UINT32);
+  const fundingRecipient = customConfig.fundingRecipient || artistAccount;
+  const permissionedQuantity = customConfig.permissionedQuantity || BigNumber.from(0);
+  const signerAddress = customConfig.signer === null ? NULL_ADDRESS : soundOwner.address;
+
+  let eventData;
+
+  if (!customConfig.skipCreateEditions) {
+    for (let i = 0; i < editionCount; i++) {
+      const createEditionTx = await createEdition({
+        artistContract,
+        artistAccount,
+        editionArgs: [
+          fundingRecipient.address,
+          price,
+          quantity,
+          royaltyBPS,
+          startTime,
+          endTime,
+          permissionedQuantity,
+          signerAddress,
+        ],
+      });
+
+      const editionReceipt = await createEditionTx.wait();
+      const contractEvent = artistContract.interface.parseLog(editionReceipt.events[0]);
+
+      // note: if editionCount > 1, this will be the last event emitted
+      eventData = contractEvent.args;
+    }
+  }
+
+  return {
+    artistContract,
+    fundingRecipient,
+    price,
+    quantity,
+    royaltyBPS,
+    startTime,
+    endTime,
+    permissionedQuantity,
+    signerAddress,
+    soundOwner,
+    artistAccount,
+    miscAccounts,
+    eventData,
+  };
 }
