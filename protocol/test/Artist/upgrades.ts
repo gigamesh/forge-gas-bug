@@ -18,7 +18,7 @@ import {
   NULL_ADDRESS,
   createEdition,
   EditionArgs,
-} from './helpers';
+} from '../helpers';
 
 chai.use(solidity);
 
@@ -43,7 +43,7 @@ const { baseURIs } = constants;
 const chainId = 1337;
 const EDITION_ID = '1';
 
-describe('Upgrades', () => {
+describe('Artist upgrades', () => {
   let artistCreator: Contract;
   let soundOwnerSigner: SignerWithAddress;
   let artistAccount: SignerWithAddress;
@@ -512,54 +512,6 @@ describe('Upgrades', () => {
           expect(receipt.status).to.equal(1);
         }
       });
-    });
-  });
-
-  //================== ArtistCreator.sol ==================/
-
-  describe('ArtistCreator.sol', async () => {
-    it('prevents attackers from upgrading Artist beacon', async () => {
-      await setUp();
-      // Deploy v2 implementation
-      const ArtistV2 = await ethers.getContractFactory('ArtistV2');
-      const artistV2Impl = await ArtistV2.deploy();
-      await artistV2Impl.deployed();
-      for (const attacker of miscSigners) {
-        // upgrade beacon
-        const beaconAddress = await artistCreator.beaconAddress();
-        const beaconContract = await ethers.getContractAt('UpgradeableBeacon', beaconAddress, attacker);
-        const beaconTx = beaconContract.upgradeTo(artistV2Impl.address);
-        expect(beaconTx).to.be.revertedWith('Ownable: caller is not the owner');
-      }
-    });
-
-    it('allows soundOwnerSigner to upgrade twice', async () => {
-      await setUp();
-
-      const ArtistCreator = await ethers.getContractFactory('ArtistCreator');
-      const artistCreatorV2 = await upgrades.upgradeProxy(artistCreator.address, ArtistCreator);
-      await artistCreatorV2.deployed();
-
-      const ArtistCreatorV3Test = await ethers.getContractFactory('ArtistCreatorUpgradeTest');
-      const artistCreatorV3 = await upgrades.upgradeProxy(artistCreator.address, ArtistCreatorV3Test);
-      await artistCreatorV3.deployed();
-
-      const v3testFuncResponse = await artistCreatorV3.testFunction();
-      expect(v3testFuncResponse.toString()).to.equal('666');
-    });
-
-    it('prevents attacker from upgrading', async () => {
-      await setUp();
-
-      // deploy v2 ArtistCreator
-      const ArtistCreator = await ethers.getContractFactory('ArtistCreator');
-      const artistCreatorV2 = await ArtistCreator.deploy();
-      await artistCreatorV2.deployed();
-
-      const artistCreatorV1 = await ethers.getContractAt('ArtistCreator', artistCreator.address, miscSigners[0]);
-      const tx = artistCreatorV1.upgradeTo(artistCreatorV2.address);
-
-      expect(tx).to.be.revertedWith('Ownable: caller is not the owner');
     });
   });
 

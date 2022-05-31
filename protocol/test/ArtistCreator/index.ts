@@ -4,7 +4,7 @@ import { expect } from 'chai';
 import { Contract } from 'ethers';
 import { ethers, upgrades, waffle } from 'hardhat';
 
-import { createArtist } from './helpers';
+import { createArtist } from '../helpers';
 
 const { getAuthSignature } = helpers;
 const EXAMPLE_ARTIST_NAME = 'Alpha & Omega';
