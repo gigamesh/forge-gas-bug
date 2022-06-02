@@ -1,5 +1,11 @@
 # @soundxyz/common
 
+## 3.3.0
+
+### Minor Changes
+
+- 03a5f42: remove genres
+
 ## 3.2.0
 
 ### Minor Changes
