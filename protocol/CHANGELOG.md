@@ -1,5 +1,27 @@
 # @soundxyz/protocol
 
+## 6.1.0
+
+### Minor Changes
+
+- 1d66848: - createEdition helper
+  - createSplit helper
+- 47ae27f: Improving deployment helper functions
+- 63438a9: - Moves the setup function from global config to helpers file and removes global config
+  file. It's a more simple design and makes tests more explicitly atomic (ex: new ArtistCreator
+  deployment for every test)
+  - Removes running the tests against the Artist implementation. We never use the implementation
+    contract directly in prod, so it makes no sense to be testing it. I kept the
+    deployArtistImplementation helper for edge cases in which it might be needed.
+- f97ac62: Restructures test directory
+
+### Patch Changes
+
+- fd44691: Additional typescript fix
+- 66781ca: Fixes typescript warnings
+- Updated dependencies [9f44b3a]
+  - @soundxyz/common@3.2.0
+
 ## 6.0.0
 
 ### Major Changes

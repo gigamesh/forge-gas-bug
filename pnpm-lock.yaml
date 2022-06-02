@@ -95,7 +95,7 @@ importers:
       '@pnpm/exportable-manifest': ^2.2.4
       '@pnpm/types': ^7.9.0
       '@rari-capital/solmate': ^6.2.0
-      '@soundxyz/common': workspace:^3.1.0
+      '@soundxyz/common': workspace:^3.2.0
       '@typechain/ethers-v5': ^7.1.0
       '@typechain/hardhat': ^2.3.0
       '@types/chai': ^4.3.0
@@ -401,6 +401,7 @@ packages:
       ethers: 5.5.4
     transitivePeerDependencies:
       - bufferutil
+      - supports-color
       - utf-8-validate
     dev: false
 
@@ -461,6 +462,7 @@ packages:
       postinstall-postinstall: 2.1.0
     transitivePeerDependencies:
       - bufferutil
+      - supports-color
       - utf-8-validate
     dev: false
 
@@ -484,6 +486,8 @@ packages:
       level-mem: 5.0.1
       lru-cache: 5.1.1
       semaphore-async-await: 1.5.1
+    transitivePeerDependencies:
+      - supports-color
     dev: false
 
   /@ethereumjs/common/2.6.0:
@@ -525,6 +529,8 @@ packages:
       mcl-wasm: 0.7.9
       merkle-patricia-tree: 4.2.2
       rustbn.js: 0.2.0
+    transitivePeerDependencies:
+      - supports-color
     dev: false
 
   /@ethersproject/abi/5.0.0-beta.153:
@@ -1066,6 +1072,8 @@ packages:
       debug: 3.2.7
       is-url: 1.2.4
       request: 2.88.2
+    transitivePeerDependencies:
+      - supports-color
     dev: false
 
   /@resolver-engine/fs/0.3.3:
@@ -1073,6 +1081,8 @@ packages:
     dependencies:
       '@resolver-engine/core': 0.3.3
       debug: 3.2.7
+    transitivePeerDependencies:
+      - supports-color
     dev: false
 
   /@resolver-engine/imports-fs/0.3.3:
@@ -1081,6 +1091,8 @@ packages:
       '@resolver-engine/fs': 0.3.3
       '@resolver-engine/imports': 0.3.3
       debug: 3.2.7
+    transitivePeerDependencies:
+      - supports-color
     dev: false
 
   /@resolver-engine/imports/0.3.3:
@@ -1091,6 +1103,8 @@ packages:
       hosted-git-info: 2.8.9
       path-browserify: 1.0.1
       url: 0.11.0
+    transitivePeerDependencies:
+      - supports-color
     dev: false
 
   /@rollup/pluginutils/4.1.2:
@@ -1216,6 +1230,10 @@ packages:
       bn.js: 5.2.0
       ethers: 4.0.49
       web3: 1.5.3
+    transitivePeerDependencies:
+      - bufferutil
+      - supports-color
+      - utf-8-validate
     dev: false
 
   /@truffle/provider/0.2.48:
@@ -1224,6 +1242,10 @@ packages:
       '@truffle/error': 0.1.0
       '@truffle/interface-adapter': 0.5.12
       web3: 1.5.3
+    transitivePeerDependencies:
+      - bufferutil
+      - supports-color
+      - utf-8-validate
     dev: false
 
   /@tsconfig/node10/1.0.8:
@@ -1897,6 +1919,8 @@ packages:
       private: 0.1.8
       slash: 1.0.0
       source-map: 0.5.7
+    transitivePeerDependencies:
+      - supports-color
     dev: false
 
   /babel-generator/6.26.1:
@@ -1918,6 +1942,8 @@ packages:
       babel-helper-explode-assignable-expression: 6.24.1
       babel-runtime: 6.26.0
       babel-types: 6.26.0
+    transitivePeerDependencies:
+      - supports-color
     dev: false
 
   /babel-helper-call-delegate/6.24.1:
@@ -1927,6 +1953,8 @@ packages:
       babel-runtime: 6.26.0
       babel-traverse: 6.26.0
       babel-types: 6.26.0
+    transitivePeerDependencies:
+      - supports-color
     dev: false
 
   /babel-helper-define-map/6.26.0:
@@ -1936,6 +1964,8 @@ packages:
       babel-runtime: 6.26.0
       babel-types: 6.26.0
       lodash: 4.17.21
+    transitivePeerDependencies:
+      - supports-color
     dev: false
 
   /babel-helper-explode-assignable-expression/6.24.1:
@@ -1944,6 +1974,8 @@ packages:
       babel-runtime: 6.26.0
       babel-traverse: 6.26.0
       babel-types: 6.26.0
+    transitivePeerDependencies:
+      - supports-color
     dev: false
 
   /babel-helper-function-name/6.24.1:
@@ -1954,6 +1986,8 @@ packages:
       babel-template: 6.26.0
       babel-traverse: 6.26.0
       babel-types: 6.26.0
+    transitivePeerDependencies:
+      - supports-color
     dev: false
 
   /babel-helper-get-function-arity/6.24.1:
@@ -1993,6 +2027,8 @@ packages:
       babel-template: 6.26.0
       babel-traverse: 6.26.0
       babel-types: 6.26.0
+    transitivePeerDependencies:
+      - supports-color
     dev: false
 
   /babel-helper-replace-supers/6.24.1:
@@ -2004,6 +2040,8 @@ packages:
       babel-template: 6.26.0
       babel-traverse: 6.26.0
       babel-types: 6.26.0
+    transitivePeerDependencies:
+      - supports-color
     dev: false
 
   /babel-helpers/6.24.1:
@@ -2011,6 +2049,8 @@ packages:
     dependencies:
       babel-runtime: 6.26.0
       babel-template: 6.26.0
+    transitivePeerDependencies:
+      - supports-color
     dev: false
 
   /babel-messages/6.23.0:
@@ -2043,6 +2083,8 @@ packages:
       babel-helper-remap-async-to-generator: 6.24.1
       babel-plugin-syntax-async-functions: 6.13.0
       babel-runtime: 6.26.0
+    transitivePeerDependencies:
+      - supports-color
     dev: false
 
   /babel-plugin-transform-es2015-arrow-functions/6.22.0:
@@ -2065,6 +2107,8 @@ packages:
       babel-traverse: 6.26.0
       babel-types: 6.26.0
       lodash: 4.17.21
+    transitivePeerDependencies:
+      - supports-color
     dev: false
 
   /babel-plugin-transform-es2015-classes/6.24.1:
@@ -2079,6 +2123,8 @@ packages:
       babel-template: 6.26.0
       babel-traverse: 6.26.0
       babel-types: 6.26.0
+    transitivePeerDependencies:
+      - supports-color
     dev: false
 
   /babel-plugin-transform-es2015-computed-properties/6.24.1:
@@ -2086,6 +2132,8 @@ packages:
     dependencies:
       babel-runtime: 6.26.0
       babel-template: 6.26.0
+    transitivePeerDependencies:
+      - supports-color
     dev: false
 
   /babel-plugin-transform-es2015-destructuring/6.23.0:
@@ -2113,6 +2161,8 @@ packages:
       babel-helper-function-name: 6.24.1
       babel-runtime: 6.26.0
       babel-types: 6.26.0
+    transitivePeerDependencies:
+      - supports-color
     dev: false
 
   /babel-plugin-transform-es2015-literals/6.22.0:
@@ -2127,6 +2177,8 @@ packages:
       babel-plugin-transform-es2015-modules-commonjs: 6.26.2
       babel-runtime: 6.26.0
       babel-template: 6.26.0
+    transitivePeerDependencies:
+      - supports-color
     dev: false
 
   /babel-plugin-transform-es2015-modules-commonjs/6.26.2:
@@ -2136,6 +2188,8 @@ packages:
       babel-runtime: 6.26.0
       babel-template: 6.26.0
       babel-types: 6.26.0
+    transitivePeerDependencies:
+      - supports-color
     dev: false
 
   /babel-plugin-transform-es2015-modules-systemjs/6.24.1:
@@ -2144,6 +2198,8 @@ packages:
       babel-helper-hoist-variables: 6.24.1
       babel-runtime: 6.26.0
       babel-template: 6.26.0
+    transitivePeerDependencies:
+      - supports-color
     dev: false
 
   /babel-plugin-transform-es2015-modules-umd/6.24.1:
@@ -2152,6 +2208,8 @@ packages:
       babel-plugin-transform-es2015-modules-amd: 6.24.1
       babel-runtime: 6.26.0
       babel-template: 6.26.0
+    transitivePeerDependencies:
+      - supports-color
     dev: false
 
   /babel-plugin-transform-es2015-object-super/6.24.1:
@@ -2159,6 +2217,8 @@ packages:
     dependencies:
       babel-helper-replace-supers: 6.24.1
       babel-runtime: 6.26.0
+    transitivePeerDependencies:
+      - supports-color
     dev: false
 
   /babel-plugin-transform-es2015-parameters/6.24.1:
@@ -2170,6 +2230,8 @@ packages:
       babel-template: 6.26.0
       babel-traverse: 6.26.0
       babel-types: 6.26.0
+    transitivePeerDependencies:
+      - supports-color
     dev: false
 
   /babel-plugin-transform-es2015-shorthand-properties/6.24.1:
@@ -2219,6 +2281,8 @@ packages:
       babel-helper-builder-binary-assignment-operator-visitor: 6.24.1
       babel-plugin-syntax-exponentiation-operator: 6.13.0
       babel-runtime: 6.26.0
+    transitivePeerDependencies:
+      - supports-color
     dev: false
 
   /babel-plugin-transform-regenerator/6.26.0:
@@ -2267,6 +2331,8 @@ packages:
       browserslist: 3.2.8
       invariant: 2.2.4
       semver: 5.7.1
+    transitivePeerDependencies:
+      - supports-color
     dev: false
 
   /babel-register/6.26.0:
@@ -2279,6 +2345,8 @@ packages:
       lodash: 4.17.21
       mkdirp: 0.5.5
       source-map-support: 0.4.18
+    transitivePeerDependencies:
+      - supports-color
     dev: false
 
   /babel-runtime/6.26.0:
@@ -2296,6 +2364,8 @@ packages:
       babel-types: 6.26.0
       babylon: 6.18.0
       lodash: 4.17.21
+    transitivePeerDependencies:
+      - supports-color
     dev: false
 
   /babel-traverse/6.26.0:
@@ -2310,6 +2380,8 @@ packages:
       globals: 9.18.0
       invariant: 2.2.4
       lodash: 4.17.21
+    transitivePeerDependencies:
+      - supports-color
     dev: false
 
   /babel-types/6.26.0:
@@ -2326,6 +2398,8 @@ packages:
     dependencies:
       babel-core: 6.26.3
       object-assign: 4.1.1
+    transitivePeerDependencies:
+      - supports-color
     dev: false
 
   /babylon/6.18.0:
@@ -2490,6 +2564,8 @@ packages:
       qs: 6.9.6
       raw-body: 2.4.2
       type-is: 1.6.18
+    transitivePeerDependencies:
+      - supports-color
     dev: false
 
   /brace-expansion/1.1.11:
@@ -2512,6 +2588,8 @@ packages:
       snapdragon-node: 2.1.1
       split-string: 3.1.0
       to-regex: 3.0.2
+    transitivePeerDependencies:
+      - supports-color
     dev: false
 
   /braces/3.0.2:
@@ -3344,6 +3422,11 @@ packages:
 
   /debug/2.6.9:
     resolution: {integrity: sha512-bC7ElrdJaJnPbAP+1EotYvqZsb3ecl5wi6Bfi6BJTUcNowp6cvspg0jXznRTKDjm/E7AdgFBVeAPVMNcKGsHMA==}
+    peerDependencies:
+      supports-color: '*'
+    peerDependenciesMeta:
+      supports-color:
+        optional: true
     dependencies:
       ms: 2.0.0
     dev: false
@@ -3351,12 +3434,35 @@ packages:
   /debug/3.2.6:
     resolution: {integrity: sha512-mel+jf7nrtEl5Pn1Qx46zARXKDpBbvzezse7p7LqINmdoIk8PYP5SySaxEmYv6TZ0JyEKA1hsCId6DIhgITtWQ==}
     deprecated: Debug versions >=3.2.0 <3.2.7 || >=4 <4.3.1 have a low-severity ReDos regression when used in a Node.js environment. It is recommended you upgrade to 3.2.7 or 4.3.1. (https://github.com/visionmedia/debug/issues/797)
+    peerDependencies:
+      supports-color: '*'
+    peerDependenciesMeta:
+      supports-color:
+        optional: true
     dependencies:
       ms: 2.1.3
     dev: false
 
+  /debug/3.2.6_supports-color@6.0.0:
+    resolution: {integrity: sha512-mel+jf7nrtEl5Pn1Qx46zARXKDpBbvzezse7p7LqINmdoIk8PYP5SySaxEmYv6TZ0JyEKA1hsCId6DIhgITtWQ==}
+    deprecated: Debug versions >=3.2.0 <3.2.7 || >=4 <4.3.1 have a low-severity ReDos regression when used in a Node.js environment. It is recommended you upgrade to 3.2.7 or 4.3.1. (https://github.com/visionmedia/debug/issues/797)
+    peerDependencies:
+      supports-color: '*'
+    peerDependenciesMeta:
+      supports-color:
+        optional: true
+    dependencies:
+      ms: 2.1.3
+      supports-color: 6.0.0
+    dev: false
+
   /debug/3.2.7:
     resolution: {integrity: sha512-CFjzYYAi4ThfiQvizrFQevTTXHtnCqWfe7x1AhgEscTz6ZbLbfoLRLPugTQyBth6f8ZERVUSyWHFD/7Wu4t1XQ==}
+    peerDependencies:
+      supports-color: '*'
+    peerDependenciesMeta:
+      supports-color:
+        optional: true
     dependencies:
       ms: 2.1.3
     dev: false
@@ -3537,6 +3643,8 @@ packages:
     dependencies:
       address: 1.1.2
       debug: 2.6.9
+    transitivePeerDependencies:
+      - supports-color
     dev: false
 
   /diff/3.5.0:
@@ -4124,6 +4232,8 @@ packages:
       json-rpc-engine: 3.8.0
       pify: 2.3.0
       tape: 4.15.0
+    transitivePeerDependencies:
+      - supports-color
     dev: false
 
   /eth-ens-namehash/2.0.8:
@@ -4165,6 +4275,8 @@ packages:
       eth-json-rpc-middleware: 1.6.0
       json-rpc-engine: 3.8.0
       json-rpc-error: 2.0.0
+    transitivePeerDependencies:
+      - supports-color
     dev: false
 
   /eth-json-rpc-middleware/1.6.0:
@@ -4183,6 +4295,8 @@ packages:
       json-stable-stringify: 1.0.1
       promise-to-callback: 1.0.0
       tape: 4.15.0
+    transitivePeerDependencies:
+      - supports-color
     dev: false
 
   /eth-lib/0.1.29:
@@ -4194,6 +4308,10 @@ packages:
       servify: 0.1.12
       ws: 3.3.3
       xhr-request-promise: 0.1.3
+    transitivePeerDependencies:
+      - bufferutil
+      - supports-color
+      - utf-8-validate
     dev: false
 
   /eth-lib/0.2.8:
@@ -4659,6 +4777,8 @@ packages:
       regex-not: 1.0.2
       snapdragon: 0.8.2
       to-regex: 3.0.2
+    transitivePeerDependencies:
+      - supports-color
     dev: false
 
   /express/4.17.2:
@@ -4695,6 +4815,8 @@ packages:
       type-is: 1.6.18
       utils-merge: 1.0.1
       vary: 1.1.2
+    transitivePeerDependencies:
+      - supports-color
     dev: false
 
   /ext/1.6.0:
@@ -4746,6 +4868,8 @@ packages:
       regex-not: 1.0.2
       snapdragon: 0.8.2
       to-regex: 3.0.2
+    transitivePeerDependencies:
+      - supports-color
     dev: false
 
   /extsprintf/1.3.0:
@@ -4839,6 +4963,8 @@ packages:
       parseurl: 1.3.3
       statuses: 1.5.0
       unpipe: 1.0.0
+    transitivePeerDependencies:
+      - supports-color
     dev: false
 
   /find-replace/1.0.3:
@@ -4892,6 +5018,8 @@ packages:
     dependencies:
       fs-extra: 4.0.3
       micromatch: 3.1.10
+    transitivePeerDependencies:
+      - supports-color
     dev: false
 
   /find-yarn-workspace-root/2.0.0:
@@ -5148,6 +5276,10 @@ packages:
     optionalDependencies:
       ethereumjs-wallet: 0.6.5
       web3: 1.2.11
+    transitivePeerDependencies:
+      - bufferutil
+      - supports-color
+      - utf-8-validate
     dev: false
     bundledDependencies:
       - keccak
@@ -6324,6 +6456,8 @@ packages:
       json-rpc-error: 2.0.0
       promise-to-callback: 1.0.0
       safe-event-emitter: 1.0.1
+    transitivePeerDependencies:
+      - supports-color
     dev: false
 
   /json-rpc-error/2.0.0:
@@ -7048,6 +7182,8 @@ packages:
       regex-not: 1.0.2
       snapdragon: 0.8.2
       to-regex: 3.0.2
+    transitivePeerDependencies:
+      - supports-color
     dev: false
 
   /micromatch/4.0.4:
@@ -7197,7 +7333,7 @@ packages:
       ansi-colors: 3.2.3
       browser-stdout: 1.3.1
       chokidar: 3.3.0
-      debug: 3.2.6
+      debug: 3.2.6_supports-color@6.0.0
       diff: 3.5.0
       escape-string-regexp: 1.0.5
       find-up: 3.0.0
@@ -7313,6 +7449,8 @@ packages:
       regex-not: 1.0.2
       snapdragon: 0.8.2
       to-regex: 3.0.2
+    transitivePeerDependencies:
+      - supports-color
     dev: false
 
   /natural-compare/1.4.0:
@@ -7789,6 +7927,8 @@ packages:
       semver: 5.7.1
       slash: 2.0.0
       tmp: 0.0.33
+    transitivePeerDependencies:
+      - supports-color
     dev: false
 
   /patch-package/6.4.7:
@@ -8774,6 +8914,8 @@ packages:
       on-finished: 2.3.0
       range-parser: 1.2.1
       statuses: 1.5.0
+    transitivePeerDependencies:
+      - supports-color
     dev: false
 
   /serve-static/1.14.2:
@@ -8784,6 +8926,8 @@ packages:
       escape-html: 1.0.3
       parseurl: 1.3.3
       send: 0.17.2
+    transitivePeerDependencies:
+      - supports-color
     dev: false
 
   /servify/0.1.12:
@@ -8795,6 +8939,8 @@ packages:
       express: 4.17.2
       request: 2.88.2
       xhr: 2.6.0
+    transitivePeerDependencies:
+      - supports-color
     dev: false
 
   /set-blocking/2.0.0:
@@ -8995,6 +9141,8 @@ packages:
       source-map: 0.5.7
       source-map-resolve: 0.5.3
       use: 3.1.1
+    transitivePeerDependencies:
+      - supports-color
     dev: false
 
   /solc/0.4.26:
@@ -9128,6 +9276,10 @@ packages:
       semver: 7.3.5
       shelljs: 0.8.5
       web3-utils: 1.7.0
+    transitivePeerDependencies:
+      - bufferutil
+      - supports-color
+      - utf-8-validate
     dev: false
 
   /sort-keys/4.2.0:
@@ -9518,6 +9670,10 @@ packages:
       setimmediate: 1.0.5
       tar: 4.4.19
       xhr-request: 1.1.0
+    transitivePeerDependencies:
+      - bufferutil
+      - supports-color
+      - utf-8-validate
     dev: false
 
   /sync-request/6.1.0:
@@ -10044,7 +10200,6 @@ packages:
     resolution: {integrity: sha512-TCTIul70LyWe6IJWT8QSYeA54WQe8EjQFU4wY52Fasj5UKx88LNYKCgBEHcOMOrFF1rKGbD8v/xcNWVUq9SymA==}
     engines: {node: '>=4.2.0'}
     hasBin: true
-    dev: true
 
   /typewise-core/1.2.0:
     resolution: {integrity: sha1-l+uRgFx/VdL5QXSPpQ0xXZke8ZU=}
@@ -10274,6 +10429,10 @@ packages:
       got: 9.6.0
       swarm-js: 0.1.40
       underscore: 1.9.1
+    transitivePeerDependencies:
+      - bufferutil
+      - supports-color
+      - utf-8-validate
     dev: false
     optional: true
 
@@ -10285,6 +10444,10 @@ packages:
       '@types/node': 12.20.43
       got: 9.6.0
       swarm-js: 0.1.40
+    transitivePeerDependencies:
+      - bufferutil
+      - supports-color
+      - utf-8-validate
     dev: false
 
   /web3-core-helpers/1.2.11:
@@ -10354,6 +10517,8 @@ packages:
       web3-providers-http: 1.2.11
       web3-providers-ipc: 1.2.11
       web3-providers-ws: 1.2.11
+    transitivePeerDependencies:
+      - supports-color
     dev: false
     optional: true
 
@@ -10366,6 +10531,8 @@ packages:
       web3-providers-http: 1.5.3
       web3-providers-ipc: 1.5.3
       web3-providers-ws: 1.5.3
+    transitivePeerDependencies:
+      - supports-color
     dev: false
 
   /web3-core-subscriptions/1.2.11:
@@ -10397,6 +10564,8 @@ packages:
       web3-core-method: 1.2.11
       web3-core-requestmanager: 1.2.11
       web3-utils: 1.2.11
+    transitivePeerDependencies:
+      - supports-color
     dev: false
     optional: true
 
@@ -10411,6 +10580,8 @@ packages:
       web3-core-method: 1.5.3
       web3-core-requestmanager: 1.5.3
       web3-utils: 1.5.3
+    transitivePeerDependencies:
+      - supports-color
     dev: false
 
   /web3-eth-abi/1.2.11:
@@ -10446,6 +10617,8 @@ packages:
       web3-core-helpers: 1.2.11
       web3-core-method: 1.2.11
       web3-utils: 1.2.11
+    transitivePeerDependencies:
+      - supports-color
     dev: false
     optional: true
 
@@ -10464,6 +10637,8 @@ packages:
       web3-core-helpers: 1.5.3
       web3-core-method: 1.5.3
       web3-utils: 1.5.3
+    transitivePeerDependencies:
+      - supports-color
     dev: false
 
   /web3-eth-contract/1.2.11:
@@ -10479,6 +10654,8 @@ packages:
       web3-core-subscriptions: 1.2.11
       web3-eth-abi: 1.2.11
       web3-utils: 1.2.11
+    transitivePeerDependencies:
+      - supports-color
     dev: false
     optional: true
 
@@ -10494,6 +10671,8 @@ packages:
       web3-core-subscriptions: 1.5.3
       web3-eth-abi: 1.5.3
       web3-utils: 1.5.3
+    transitivePeerDependencies:
+      - supports-color
     dev: false
 
   /web3-eth-ens/1.2.11:
@@ -10509,6 +10688,8 @@ packages:
       web3-eth-abi: 1.2.11
       web3-eth-contract: 1.2.11
       web3-utils: 1.2.11
+    transitivePeerDependencies:
+      - supports-color
     dev: false
     optional: true
 
@@ -10524,6 +10705,8 @@ packages:
       web3-eth-abi: 1.5.3
       web3-eth-contract: 1.5.3
       web3-utils: 1.5.3
+    transitivePeerDependencies:
+      - supports-color
     dev: false
 
   /web3-eth-iban/1.2.11:
@@ -10553,6 +10736,8 @@ packages:
       web3-core-method: 1.2.11
       web3-net: 1.2.11
       web3-utils: 1.2.11
+    transitivePeerDependencies:
+      - supports-color
     dev: false
     optional: true
 
@@ -10566,6 +10751,8 @@ packages:
       web3-core-method: 1.5.3
       web3-net: 1.5.3
       web3-utils: 1.5.3
+    transitivePeerDependencies:
+      - supports-color
     dev: false
 
   /web3-eth/1.2.11:
@@ -10585,6 +10772,8 @@ packages:
       web3-eth-personal: 1.2.11
       web3-net: 1.2.11
       web3-utils: 1.2.11
+    transitivePeerDependencies:
+      - supports-color
     dev: false
     optional: true
 
@@ -10604,6 +10793,8 @@ packages:
       web3-eth-personal: 1.5.3
       web3-net: 1.5.3
       web3-utils: 1.5.3
+    transitivePeerDependencies:
+      - supports-color
     dev: false
 
   /web3-net/1.2.11:
@@ -10613,6 +10804,8 @@ packages:
       web3-core: 1.2.11
       web3-core-method: 1.2.11
       web3-utils: 1.2.11
+    transitivePeerDependencies:
+      - supports-color
     dev: false
     optional: true
 
@@ -10623,6 +10816,8 @@ packages:
       web3-core: 1.5.3
       web3-core-method: 1.5.3
       web3-utils: 1.5.3
+    transitivePeerDependencies:
+      - supports-color
     dev: false
 
   /web3-provider-engine/14.2.1:
@@ -10648,6 +10843,10 @@ packages:
       ws: 5.2.3
       xhr: 2.6.0
       xtend: 4.0.2
+    transitivePeerDependencies:
+      - bufferutil
+      - supports-color
+      - utf-8-validate
     dev: false
 
   /web3-providers-http/1.2.11:
@@ -10693,6 +10892,8 @@ packages:
       underscore: 1.9.1
       web3-core-helpers: 1.2.11
       websocket: 1.0.32
+    transitivePeerDependencies:
+      - supports-color
     dev: false
     optional: true
 
@@ -10703,6 +10904,8 @@ packages:
       eventemitter3: 4.0.4
       web3-core-helpers: 1.5.3
       websocket: 1.0.32
+    transitivePeerDependencies:
+      - supports-color
     dev: false
 
   /web3-shh/1.2.11:
@@ -10713,6 +10916,8 @@ packages:
       web3-core-method: 1.2.11
       web3-core-subscriptions: 1.2.11
       web3-net: 1.2.11
+    transitivePeerDependencies:
+      - supports-color
     dev: false
     optional: true
 
@@ -10725,6 +10930,8 @@ packages:
       web3-core-method: 1.5.3
       web3-core-subscriptions: 1.5.3
       web3-net: 1.5.3
+    transitivePeerDependencies:
+      - supports-color
     dev: false
 
   /web3-utils/1.2.11:
@@ -10780,6 +10987,10 @@ packages:
       web3-net: 1.2.11
       web3-shh: 1.2.11
       web3-utils: 1.2.11
+    transitivePeerDependencies:
+      - bufferutil
+      - supports-color
+      - utf-8-validate
     dev: false
     optional: true
 
@@ -10795,6 +11006,10 @@ packages:
       web3-net: 1.5.3
       web3-shh: 1.5.3
       web3-utils: 1.5.3
+    transitivePeerDependencies:
+      - bufferutil
+      - supports-color
+      - utf-8-validate
     dev: false
 
   /webidl-conversions/3.0.1:
@@ -10811,6 +11026,8 @@ packages:
       typedarray-to-buffer: 3.1.5
       utf-8-validate: 5.0.8
       yaeti: 0.0.6
+    transitivePeerDependencies:
+      - supports-color
     dev: false
 
   /whatwg-fetch/2.0.4:
@@ -10960,6 +11177,14 @@ packages:
 
   /ws/3.3.3:
     resolution: {integrity: sha512-nnWLa/NwZSt4KQJu51MYlCcSQ5g7INpOrOMt4XV8j4dqTXdmlUmSHQ8/oLC069ckre0fRsgfvsKwbTdtKLCDkA==}
+    peerDependencies:
+      bufferutil: ^4.0.1
+      utf-8-validate: ^5.0.2
+    peerDependenciesMeta:
+      bufferutil:
+        optional: true
+      utf-8-validate:
+        optional: true
     dependencies:
       async-limiter: 1.0.1
       safe-buffer: 5.1.2
@@ -10968,6 +11193,14 @@ packages:
 
   /ws/5.2.3:
     resolution: {integrity: sha512-jZArVERrMsKUatIdnLzqvcfydI85dvd/Fp1u/VOpfdDWQ4c9qWXe+VIeAbQ5FrDwciAkr+lzofXLz3Kuf26AOA==}
+    peerDependencies:
+      bufferutil: ^4.0.1
+      utf-8-validate: ^5.0.2
+    peerDependenciesMeta:
+      bufferutil:
+        optional: true
+      utf-8-validate:
+        optional: true
     dependencies:
       async-limiter: 1.0.1
     dev: false
