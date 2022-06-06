@@ -109,3 +109,6 @@ dist
 !.yarn/releases
 !.yarn/sdks
 !.yarn/versions
+
+protocol/out/*
+cache/*
