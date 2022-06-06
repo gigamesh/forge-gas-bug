@@ -2,7 +2,7 @@ import { SignerWithAddress } from '@nomiclabs/hardhat-ethers/dist/src/signers';
 import { helpers } from '@soundxyz/common';
 import { BigNumber, Contract } from 'ethers';
 import { parseEther } from 'ethers/lib/utils';
-import { ethers, waffle } from 'hardhat';
+import { ethers, upgrades, waffle } from 'hardhat';
 
 import { SplitMain__factory } from '../typechain';
 
@@ -24,7 +24,7 @@ export const EMPTY_SIGNATURE =
 export const INVALID_PRIVATE_KEY = '0xb73249a6bf495f81385ce91b84cc2eff129011fea429ba7f1827d73b06390208';
 export const NULL_TICKET_NUM = '0x0';
 export const CHAIN_ID = 1337;
-export const EDITION_ID = '1';
+export const EDITION_ID = 1;
 
 //========= Types ==========//
 
@@ -35,21 +35,35 @@ type SplitInfo = {
   controller: string;
 };
 
-type CustomMintArgs = {
-  quantity?: BigNumber;
-  price?: BigNumber;
-  startTime?: BigNumber;
-  endTime?: BigNumber;
+export type EditionArgs = {
+  fundingRecipient?: string;
+  price?: number | BigNumber;
+  quantity?: number | BigNumber;
+  royaltyBPS?: number | BigNumber;
+  startTime?: number | BigNumber;
+  endTime?: number | BigNumber;
+  permissionedQuantity?: number | BigNumber;
+  signerAddress?: string;
+};
+
+type CustomConfigArgs = EditionArgs & {
   editionCount?: number;
-  royaltyBPS?: BigNumber;
-  fundingRecipient?: SignerWithAddress;
-  permissionedQuantity?: BigNumber;
   skipCreateEditions?: boolean;
-  signer?: SignerWithAddress;
-  artistContractType?: 'IMPLEMENTATION' | 'PROXY';
+  artistContractName?: string;
+  artistCreatorVersion?: number;
 };
 
 //========= Helpers ==========//
+
+export async function getAccounts() {
+  let soundOwner: SignerWithAddress;
+  let artist1: SignerWithAddress;
+  let artist2: SignerWithAddress;
+  let artist3: SignerWithAddress;
+  let miscAccounts: SignerWithAddress[];
+  [soundOwner, artist1, artist2, artist3, ...miscAccounts] = await ethers.getSigners();
+  return { soundOwner, artist1, artist2, artist3, miscAccounts };
+}
 
 export async function createArtist(
   artistCreator: Contract,
@@ -71,28 +85,17 @@ export async function createArtist(
   return artistCreator.connect(signer).createArtist(signature, artistName, symbol, baseURI);
 }
 
-export type EditionArgs = [
-  string, // fundingRecipient
-  number | BigNumber, // price
-  number | BigNumber, // quantity
-  number | BigNumber, // royaltyBPS
-  number | BigNumber, // startTime
-  number | BigNumber, // endTime
-  (number | BigNumber)?, // permissionQuantity
-  (string | undefined)? // signerAddress
-];
-
-export async function createEdition({
-  artistContract,
-  artistAccount,
+export type CreateEditionFn = ({
+  customDeployer,
+  artistContract: customArtistContract,
   editionArgs,
-}: {
-  artistContract: Contract;
-  artistAccount: SignerWithAddress;
-  editionArgs: EditionArgs;
-}) {
-  return await artistContract.connect(artistAccount).createEdition(...editionArgs);
-}
+  postUpgradeVersion,
+}?: {
+  customDeployer?: SignerWithAddress;
+  artistContract?: Contract;
+  editionArgs?: EditionArgs;
+  postUpgradeVersion?: number;
+}) => Promise<any>;
 
 export function currentSeconds() {
   return Math.floor(Date.now() / 1000);
@@ -103,7 +106,6 @@ export function getRandomInt(min = 0, max = MAX_UINT32) {
   max = Math.floor(max);
   return Math.floor(Math.random() * (max - min + 1)) + min;
 }
-
 export function getRandomBN(max?: number) {
   const rando = BigNumber.from(ethers.utils.randomBytes(4));
   if (max) {
@@ -116,49 +118,38 @@ export function getRandomAddress() {
   return ethers.Wallet.fromMnemonic(process.env.MNEMONIC, `m/44'/60'/0'/0/${getRandomInt(0, 10000)}`).address;
 }
 
-export async function deployArtistImplementation({ artistAccount }: { artistAccount: SignerWithAddress }) {
-  const Artist = await ethers.getContractFactory('ArtistV4');
-
-  const protoArtist = await Artist.connect(artistAccount).deploy();
-  await protoArtist.deployed();
-
-  await protoArtist.initialize(
-    artistAccount.address,
-    EXAMPLE_ARTIST_ID,
-    EXAMPLE_ARTIST_NAME,
-    EXAMPLE_ARTIST_SYMBOL,
-    BASE_URI
-  );
-
-  return protoArtist;
-}
-
 export async function deployArtistProxy({
   artistAccount,
   soundOwner,
-  artistCreatorVersion,
+  artistCreatorVersion = 1,
+  artistContractName = 'ArtistV4',
 }: {
   artistAccount: SignerWithAddress;
   soundOwner: SignerWithAddress;
   artistCreatorVersion?: number;
+  artistContractName?: string;
 }) {
-  // Deploy & initialize ArtistCreator
-  const artistCreatorName = `ArtistCreator${artistCreatorVersion ? 'V' + artistCreatorVersion : ''}`;
-  const ArtistCreator = await ethers.getContractFactory(artistCreatorName);
-  const artistCreator = await ArtistCreator.connect(soundOwner).deploy();
-  await artistCreator.initialize();
+  // Deploy ArtistCreator (deployProxy deploys *and* initializes ArtistCreator)
+  const ArtistCreatorFactory = await ethers.getContractFactory('ArtistCreator');
+  let artistCreator = await upgrades.deployProxy(ArtistCreatorFactory);
   await artistCreator.deployed();
 
-  // Deploy ArtistV4 implementation
-  const ArtistV4 = await ethers.getContractFactory('ArtistV4');
-  const chainId = (await provider.getNetwork()).chainId;
-  const artistV4Impl = await ArtistV4.deploy();
-  await artistV4Impl.deployed();
+  // Upgrade ArtistCreator if needed
+  if (artistCreatorVersion > 1) {
+    const ACUpgradeFactory = await ethers.getContractFactory(`ArtistCreatorV${artistCreatorVersion}`);
+    artistCreator = await upgrades.upgradeProxy(artistCreator.address, ACUpgradeFactory);
+  }
 
-  // Upgrade beacon to point to ArtistV4 implementation
+  // Deploy latest Artist implementation
+  const Artist = await ethers.getContractFactory(artistContractName);
+  const chainId = (await provider.getNetwork()).chainId;
+  const artistImpl = await Artist.deploy();
+  await artistImpl.deployed();
+
+  // Upgrade beacon to point to latest implementation
   const beaconAddress = await artistCreator.beaconAddress();
   const beaconContract = await ethers.getContractAt('UpgradeableBeacon', beaconAddress, soundOwner);
-  const beaconTx = await beaconContract.upgradeTo(artistV4Impl.address);
+  const beaconTx = await beaconContract.upgradeTo(artistImpl.address);
   await beaconTx.wait();
 
   // Get sound.xyz signature to approve artist creation
@@ -173,9 +164,11 @@ export async function deployArtistProxy({
     .connect(artistAccount)
     .createArtist(signature, EXAMPLE_ARTIST_NAME, EXAMPLE_ARTIST_SYMBOL, BASE_URI);
   const receipt = await tx.wait();
-  const contractAddress = receipt.events[3].args.artistAddress;
+  const contractAddress = receipt.events.find((e) => e.event === 'CreatedArtist').args.artistAddress;
 
-  return ethers.getContractAt('ArtistV4', contractAddress);
+  const artistContract = await ethers.getContractAt(artistContractName, contractAddress);
+
+  return { artistContract, artistCreator };
 }
 
 // shifts edition id to the left by 128 bits and adds the token id in the bottom bits
@@ -200,44 +193,79 @@ export async function createSplit({ splitMainAddress, splitInfo }: { splitMainAd
   return splitAddress;
 }
 
-export async function setUpContract(customConfig: CustomMintArgs = {}) {
-  const editionCount = customConfig.editionCount || 1;
+export async function setUpContract({
+  artistContractName = 'ArtistV4',
+  artistCreatorVersion = 1,
+  editionCount = 1,
+  skipCreateEditions,
+  ...customConfig
+}: CustomConfigArgs = {}) {
+  const artistVersion = Number(artistContractName[artistContractName.length - 1]);
 
-  const signers = await ethers.getSigners();
-  const [soundOwner, artistAccount, ...miscAccounts] = signers;
+  const { soundOwner, artist1: artistAccount, miscAccounts } = await getAccounts();
 
-  const artistContract = await (customConfig.artistContractType === 'IMPLEMENTATION'
-    ? deployArtistImplementation({ artistAccount })
-    : deployArtistProxy({ artistAccount, soundOwner }));
+  const { artistContract, artistCreator } = await deployArtistProxy({
+    artistAccount,
+    soundOwner,
+    artistContractName,
+    artistCreatorVersion,
+  });
 
   const price = customConfig.price || parseEther('0.1');
   const quantity = customConfig.quantity || getRandomBN();
   const royaltyBPS = customConfig.royaltyBPS || BigNumber.from(0);
   const startTime = customConfig.startTime || BigNumber.from(0x0); // default to start of unix epoch
   const endTime = customConfig.endTime || BigNumber.from(MAX_UINT32);
-  const fundingRecipient = customConfig.fundingRecipient || artistAccount;
+  const fundingRecipient = customConfig.fundingRecipient || artistAccount.address;
   const permissionedQuantity = customConfig.permissionedQuantity || BigNumber.from(0);
-  const signerAddress = customConfig.signer === null ? NULL_ADDRESS : soundOwner.address;
+  const signerAddress = customConfig.signerAddress || soundOwner.address;
+
+  async function createEdition({
+    customDeployer,
+    artistContract: customArtistContract,
+    editionArgs,
+    postUpgradeVersion,
+  }:
+    | {
+        customDeployer?: SignerWithAddress;
+        artistContract?: Contract;
+        editionArgs?: EditionArgs;
+        postUpgradeVersion?: number;
+      }
+    | undefined = {}) {
+    const deployer = customDeployer || artistAccount;
+
+    const args: EditionArgs = {
+      fundingRecipient,
+      price,
+      quantity,
+      royaltyBPS,
+      startTime,
+      endTime,
+    };
+    const version = postUpgradeVersion || artistVersion;
+    if (version >= 2) {
+      args.permissionedQuantity = permissionedQuantity;
+      args.signerAddress = signerAddress;
+    }
+
+    // Merge default args with custom ones passed in for each test
+    const mergedArgs = {
+      ...args,
+      ...editionArgs,
+    };
+    const editionArgsArray = Object.values(mergedArgs);
+
+    const contract = customArtistContract || artistContract;
+
+    return await contract.connect(deployer).createEdition(...editionArgsArray);
+  }
 
   let eventData;
 
-  if (!customConfig.skipCreateEditions) {
-    for (let i = 0; i < editionCount; i++) {
-      const createEditionTx = await createEdition({
-        artistContract,
-        artistAccount,
-        editionArgs: [
-          fundingRecipient.address,
-          price,
-          quantity,
-          royaltyBPS,
-          startTime,
-          endTime,
-          permissionedQuantity,
-          signerAddress,
-        ],
-      });
-
+  if (!skipCreateEditions) {
+    for (let editionId = 1; editionId <= editionCount; editionId++) {
+      const createEditionTx = await createEdition();
       const editionReceipt = await createEditionTx.wait();
       const contractEvent = artistContract.interface.parseLog(editionReceipt.events[0]);
 
@@ -248,17 +276,39 @@ export async function setUpContract(customConfig: CustomMintArgs = {}) {
 
   return {
     artistContract,
+    artistCreator,
     fundingRecipient,
-    price,
-    quantity,
-    royaltyBPS,
-    startTime,
-    endTime,
-    permissionedQuantity,
+    price: price instanceof BigNumber ? price : BigNumber.from(price),
+    quantity: quantity instanceof BigNumber ? quantity : BigNumber.from(quantity),
+    royaltyBPS: royaltyBPS instanceof BigNumber ? royaltyBPS : BigNumber.from(royaltyBPS),
+    startTime: startTime instanceof BigNumber ? startTime : BigNumber.from(startTime),
+    endTime: endTime instanceof BigNumber ? endTime : BigNumber.from(endTime),
+    permissionedQuantity:
+      permissionedQuantity instanceof BigNumber ? permissionedQuantity : BigNumber.from(permissionedQuantity),
     signerAddress,
     soundOwner,
     artistAccount,
     miscAccounts,
     eventData,
+    createEdition,
   };
 }
+
+export const createEditions = async ({
+  artistContract,
+  editionCount,
+  postUpgradeVersion,
+  createEdition,
+}: {
+  artistContract: Contract;
+  editionCount: number;
+  postUpgradeVersion?: number;
+  createEdition: CreateEditionFn;
+}) => {
+  for (let editionId = 1; editionId <= editionCount; editionId++) {
+    await createEdition({
+      artistContract,
+      postUpgradeVersion,
+    });
+  }
+};

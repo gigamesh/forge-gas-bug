@@ -10,13 +10,13 @@ import {
   deployArtistProxy,
   EDITION_ID,
   EMPTY_SIGNATURE,
-  EXAMPLE_ARTIST_ID,
   getTokenId,
   INVALID_PRIVATE_KEY,
   MAX_UINT32,
   NULL_TICKET_NUM,
   provider,
   setUpContract,
+  EXAMPLE_ARTIST_ID,
 } from '../helpers';
 
 const { getPresaleSignature } = commonHelpers;
@@ -68,7 +68,6 @@ export function buyEditionTests() {
       quantity: BigNumber.from(2),
       permissionedQuantity: BigNumber.from(1),
       startTime: BigNumber.from(currentSeconds() + 99999999),
-      editionCount: 0,
     });
 
     const buyer = miscAccounts[0];
@@ -153,12 +152,15 @@ export function buyEditionTests() {
   });
 
   it(`reverts if signature is for the wrong artist contract`, async () => {
-    const { artistContract, price, soundOwner, miscAccounts } = await setUpContract({
+    const { artistContract, price, miscAccounts, soundOwner } = await setUpContract({
       permissionedQuantity: BigNumber.from(1),
       startTime: BigNumber.from(currentSeconds() + 99999999),
     });
 
-    const wrongArtistContract = await deployArtistProxy({ artistAccount: miscAccounts[0], soundOwner });
+    const { artistContract: wrongArtistContract } = await deployArtistProxy({
+      artistAccount: miscAccounts[0],
+      soundOwner,
+    });
     const buyer = miscAccounts[1];
     const ticketNumber = '0';
     const signature = await getPresaleSignature({
@@ -184,7 +186,7 @@ export function buyEditionTests() {
       startTime: BigNumber.from(currentSeconds() + 99999999),
     });
 
-    const buyer = miscAccounts[10];
+    const buyer = miscAccounts[0];
     const ticketNumber = '0';
     const signature = await getPresaleSignature({
       chainId: CHAIN_ID,
@@ -210,7 +212,7 @@ export function buyEditionTests() {
     });
 
     const buyer = miscAccounts[0];
-    const wrongEditionId = '666';
+    const wrongEditionId = 666;
     const ticketNumber = '0';
     const signature = await getPresaleSignature({
       chainId: CHAIN_ID,
@@ -369,7 +371,7 @@ export function buyEditionTests() {
     const TOKEN_COUNT = 1;
     const tokenId = getTokenId(EDITION_ID, TOKEN_COUNT);
 
-    await expect(purchaseEvent.editionId.toString()).to.eq(EDITION_ID);
+    await expect(purchaseEvent.editionId).to.eq(EDITION_ID);
     await expect(purchaseEvent.tokenId.toString()).to.eq(tokenId);
     await expect(purchaseEvent.buyer.toString()).to.eq(purchaser.address);
     await expect(purchaseEvent.numSold.toString()).to.eq('1');
@@ -432,7 +434,7 @@ export function buyEditionTests() {
 
     const { artistContract, price, miscAccounts } = await setUpContract({
       quantity: BigNumber.from(quantity),
-      fundingRecipient,
+      fundingRecipient: fundingRecipient.address,
     });
 
     const initialBalance = await provider.getBalance(fundingRecipient.address);

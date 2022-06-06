@@ -36,8 +36,9 @@ task('deployProxy', 'Deploy Artist proxy & verify on etherscan')
 
     const receipt = await artistDeployTx.wait(5);
 
-    const artistId = receipt.events[3].args.artistId.toNumber();
-    const proxyAddress = receipt.events[3].args.artistAddress;
+    const eventArgs = receipt.events.find((e) => e.event === 'CreatedArtist').args;
+    const artistId = eventArgs.artistId.toNumber();
+    const proxyAddress = eventArgs.artistAddress;
 
     console.log(`${contractName} proxy address: ${proxyAddress}, id: ${artistId}`);
 

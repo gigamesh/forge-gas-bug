@@ -13,7 +13,7 @@ export async function endToEndTests() {
       quantity: BigNumber.from(quantity),
     });
 
-    const artistWalletInitBalance = await provider.getBalance(fundingRecipient.address);
+    const artistWalletInitBalance = await provider.getBalance(fundingRecipient);
     const artistContractInitBalance = await provider.getBalance(artistContract.address);
 
     for (let count = 1; count <= quantity; count++) {
@@ -31,7 +31,7 @@ export async function endToEndTests() {
     await artistContract.connect(soundOwner).withdrawFunds(EDITION_ID);
 
     const postWithdrawBalance = await provider.getBalance(artistContract.address);
-    const recipientBalance = await provider.getBalance(fundingRecipient.address);
+    const recipientBalance = await provider.getBalance(fundingRecipient);
     const totalRevenue = price.mul(quantity);
 
     // All the funds are withdrawn

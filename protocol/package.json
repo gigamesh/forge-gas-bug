@@ -23,6 +23,7 @@
     "seed:rinkeby": "DEPLOY_SEED_DATA=true pnpm deploy:rinkeby",
     "test": "hardhat test",
     "coverage": "hardhat coverage",
+    "size": "hardhat size-contracts",
     "test-watcher": "bob-tsm --cjs scripts/test-watcher.ts",
     "test-watcher:rinkeby": "NEXT_PUBLIC_VERCEL_ENV=preview pnpm test-watcher",
     "transfer-ownership": "hardhat transfer-ownership",

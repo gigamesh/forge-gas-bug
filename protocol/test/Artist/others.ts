@@ -62,7 +62,7 @@ export function setSignerAddressTests() {
     const receipt = await tx.wait();
     const event = receipt.events.find((e) => e.event === 'SignerAddressSet');
 
-    await expect(event.args.editionId.toString()).to.eq(EDITION_ID);
+    await expect(event.args.editionId).to.eq(EDITION_ID);
     await expect(event.args.signerAddress).to.eq(newSigner.address);
   });
 }
@@ -78,7 +78,10 @@ export function setPermissionedQuantityTests() {
   });
 
   it('prevents attempt to set permissioned quantity when there is no signer address', async () => {
-    const { artistContract, artistAccount } = await setUpContract({ quantity: BigNumber.from(69), signer: null });
+    const { artistContract, artistAccount } = await setUpContract({
+      quantity: BigNumber.from(69),
+      signerAddress: NULL_ADDRESS,
+    });
 
     const tx = artistContract.connect(artistAccount).setPermissionedQuantity(EDITION_ID, 1);
 
@@ -111,7 +114,7 @@ export function setPermissionedQuantityTests() {
 
     const event = receipt.events.find((e) => e.event === 'PermissionedQuantitySet');
 
-    await expect(event.args.editionId.toString()).to.equal(EDITION_ID);
+    await expect(event.args.editionId).to.equal(EDITION_ID);
     await expect(event.args.permissionedQuantity.toString()).to.equal(newPermissionedQuantity.toString());
   });
 }
@@ -255,7 +258,7 @@ export async function royaltyInfoTests() {
       const royaltyAmount = royalty.mul(secondarySalePrice).div(BigNumber.from(10_000));
 
       await expect(expectedRoyaltyInfo.royaltyAmount.toString()).to.eq(royaltyAmount.toString());
-      await expect(expectedRoyaltyInfo.fundingRecipient).to.eq(fundingRecipient.address);
+      await expect(expectedRoyaltyInfo.fundingRecipient).to.eq(fundingRecipient);
     }
   });
 }

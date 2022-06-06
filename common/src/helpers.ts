@@ -36,7 +36,7 @@ type PresaleWhiteListArgs = {
   chainId: number;
   contractAddress: string;
   buyerAddress: string;
-  editionId: string;
+  editionId: number;
   privateKey: string;
   provider: Provider;
   ticketNumber?: string;
@@ -69,7 +69,7 @@ export async function getPresaleSignature({
   const data: {
     contractAddress: string;
     buyerAddress: string;
-    editionId: string;
+    editionId: number;
     ticketNumber?: string;
   } = {
     contractAddress: contractAddress.toLowerCase(),

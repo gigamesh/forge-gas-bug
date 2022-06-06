@@ -10,7 +10,7 @@ export async function withdrawFundsTests() {
       quantity: BigNumber.from(quantity),
     });
 
-    const originalRecipientBalance = await provider.getBalance(fundingRecipient.address);
+    const originalRecipientBalance = await provider.getBalance(fundingRecipient);
 
     for (let count = 1; count <= quantity; count++) {
       const currentBuyer = miscAccounts[count];
@@ -25,7 +25,7 @@ export async function withdrawFundsTests() {
     // All the funds are extracted.
     await expect(contractBalance.toString()).to.eq('0');
 
-    const recipientBalance = await provider.getBalance(fundingRecipient.address);
+    const recipientBalance = await provider.getBalance(fundingRecipient);
     const revenue = price.mul(quantity);
 
     await expect(recipientBalance.toString()).to.eq(originalRecipientBalance.add(revenue));

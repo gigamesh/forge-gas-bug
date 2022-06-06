@@ -4,12 +4,9 @@ import { expect } from 'chai';
 import { Contract } from 'ethers';
 import { ethers, upgrades, waffle } from 'hardhat';
 
-import { createArtist } from '../helpers';
+import { BASE_URI, createArtist, EXAMPLE_ARTIST_NAME, EXAMPLE_ARTIST_SYMBOL } from '../helpers';
 
 const { getAuthSignature } = helpers;
-const EXAMPLE_ARTIST_NAME = 'Alpha & Omega';
-const EXAMPLE_ARTIST_SYMBOL = 'AOMEGA';
-const BASE_URI = `https://sound-staging.vercel.app/api/metadata/`;
 const { provider } = waffle;
 
 describe('ArtistCreator', () => {
@@ -93,7 +90,7 @@ describe('ArtistCreator', () => {
         );
 
         const receipt = await tx.wait();
-        const eventData = artistCreator.interface.parseLog(receipt.events[3]);
+        const eventData = receipt.events.find((e) => e.event === 'CreatedArtist');
 
         expect(eventData.args.name).to.equal(EXAMPLE_ARTIST_NAME + i);
       }
