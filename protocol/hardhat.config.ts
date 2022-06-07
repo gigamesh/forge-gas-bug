@@ -97,6 +97,16 @@ const config: HardhatUserConfig = {
   etherscan: {
     apiKey: process.env.ETHERSCAN_API_KEY,
   },
+  gasReporter: {
+    excludeContracts: [
+      'Artist.sol',
+      'ArtistV2.sol',
+      'ArtistV3.sol',
+      'ArtistV4.sol',
+      'ArtistV3Test.sol',
+      'ArtistCreator.sol',
+    ],
+  },
 };
 
 export default config;
