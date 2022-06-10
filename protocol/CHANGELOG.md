@@ -1,5 +1,11 @@
 # @soundxyz/protocol
 
+## 7.2.0
+
+### Minor Changes
+
+- f95de85: deploy:local script -> ARTIST_VERSION=5
+
 ## 7.1.0
 
 ### Minor Changes
