@@ -1,5 +1,11 @@
 # @soundxyz/protocol
 
+## 7.4.1
+
+### Patch Changes
+
+- d0be518: Rinkeby deployment dir fix
+
 ## 7.4.0
 
 ### Minor Changes
