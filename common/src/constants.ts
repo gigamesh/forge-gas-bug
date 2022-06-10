@@ -6,9 +6,9 @@ export const NETWORK_MAP = {
 };
 
 export const baseURIs: { [key: string]: string } = {
-  hardhat: 'http://localhost:3000/api/metadata/',
-  rinkeby: 'https://sound-staging.vercel.app/api/metadata/',
-  mainnet: 'https://sound.xyz/api/metadata/',
+  hardhat: 'http://localhost:8396/v1/',
+  rinkeby: 'https://staging.metadata.sound.xyz/v1/',
+  mainnet: 'https://metadata.sound.xyz/v1/',
 };
 
 export const SOUND_ADMIN_PUBLIC_ADDRESS = '0xed0faf139565bae4d856eeaffad7c81515457246';
