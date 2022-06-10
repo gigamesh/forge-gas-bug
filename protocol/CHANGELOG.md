@@ -1,5 +1,11 @@
 # @soundxyz/protocol
 
+## 7.1.0
+
+### Minor Changes
+
+- 30654a6: Bumps common package version
+
 ## 7.0.0
 
 ### Major Changes
