@@ -1,5 +1,11 @@
 # @soundxyz/protocol
 
+## 7.4.0
+
+### Minor Changes
+
+- 4b51e58: Bumps common to 3.6.0
+
 ## 7.3.0
 
 ### Minor Changes
