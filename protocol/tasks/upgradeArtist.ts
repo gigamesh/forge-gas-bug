@@ -1,8 +1,8 @@
 import { task } from 'hardhat/config';
 
-task('upgradeBeacon', 'Calls upgradeTo on an UpgradeableBeacon that points to Artist.sol implementation)')
+task('upgradeArtist', 'Calls upgradeTo on an UpgradeableBeacon that points to a new Artist implementation)')
   .addParam('beaconAddress', 'The address of the beacon contract')
-  .addParam('newImplementation', 'The address of the new Artist.sol implementation')
+  .addParam('newImplementation', 'The address of the new Artist implementation')
   .setAction(async (args, hardhat) => {
     const { beaconAddress, newImplementation } = args;
     const { network, ethers } = hardhat;

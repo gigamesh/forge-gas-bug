@@ -57,6 +57,18 @@ describe('ArtistCreator upgrades', () => {
       expect(beaconAddress).to.equal(postUpgradeBeaconAddress);
     });
 
+    it('assert beacon address has not been changed post-upgrade', async () => {
+      const { artistCreator } = await setUpContract();
+      const beaconAddress = await artistCreator.beaconAddress();
+
+      const ArtistCreatorV2 = await ethers.getContractFactory('ArtistCreatorV2');
+      const artistCreatorV2 = await upgrades.upgradeProxy(artistCreator.address, ArtistCreatorV2);
+
+      const postUpgradeBeaconAddress = await artistCreatorV2.beaconAddress();
+
+      expect(beaconAddress).to.equal(postUpgradeBeaconAddress);
+    });
+
     it('prevents attacker from upgrading', async () => {
       const { artistCreator, miscAccounts } = await setUpContract();
 

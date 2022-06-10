@@ -127,14 +127,22 @@ const func: DeployFunction = async function ({ ethers, waffle, deployments }: Ha
 
   //=============== Mint NFT editions ======================//
 
+  const editionIdMap: { [key: string]: number } = {};
   for (const [index, releaseDatum] of Object.entries(releaseData)) {
+    const editionId = Number(index) + 1;
     const splitData = creditSplits[index];
     const artistIdx = Number(index) % artists.length;
     const { name, contractAddress } = artists[artistIdx];
     const currentArtistWallet = signers[artistIdx];
     const artistContract = new Contract(contractAddress, artistArtifact.abi, currentArtistWallet);
 
-    console.log({ name, contractAddress });
+    const currentEditionId = editionIdMap[currentArtistWallet.address]
+      ? editionIdMap[currentArtistWallet.address] + 1
+      : 1;
+
+    editionIdMap[currentArtistWallet.address] = currentEditionId;
+
+    console.log({ name, contractAddress, currentEditionId });
 
     const { price, quantity, royaltyBPS, startTime, endTime, releaseId, permissionedQuantity } = releaseDatum;
 
@@ -150,8 +158,6 @@ const func: DeployFunction = async function ({ ethers, waffle, deployments }: Ha
 
     const signerAddress = new Wallet(process.env.EDITION_SIGNER).address;
 
-    console.log(process.env.EDITION_SIGNER, 'signerAddress: ', signerAddress);
-
     const tx = await artistContract.createEdition(
       fundingRecipient,
       price,
@@ -161,6 +167,8 @@ const func: DeployFunction = async function ({ ethers, waffle, deployments }: Ha
       endTime,
       permissionedQuantity,
       signerAddress,
+      currentEditionId,
+      '', // baseURI
       { gasLimit: 200_000 }
     );
 
@@ -176,10 +184,6 @@ const func: DeployFunction = async function ({ ethers, waffle, deployments }: Ha
     await waffle.provider.send('evm_increaseTime', [10]);
     await waffle.provider.send('evm_mine', []);
 
-    const { editionId } = artistContract.interface.parseLog(receipt.events[0]).args;
-
-    console.log({ editionId: editionId.toNumber(), startTime: new Date(startTime.toNumber() * 1000), releaseId });
-
     // Skip buying if the auction hasn't started for this edition
     if (startTime.mul(1000).gt(Date.now())) continue;
 
@@ -193,12 +197,14 @@ const func: DeployFunction = async function ({ ethers, waffle, deployments }: Ha
       provider: ethers.provider,
       privateKey: process.env.ADMIN_PRIVATE_KEY as string,
       ticketNumber: ticketNumber.toString(),
-      editionId: editionId.toString(),
+      editionId,
       buyerAddress: buyer.address,
       contractAddress: contractAddress,
     });
 
-    const buyTx = await artistContract.connect(buyer).buyEdition(editionId, signature, ticketNumber, { value: price });
+    const buyTx = await artistContract
+      .connect(buyer)
+      .buyEdition(currentEditionId, signature, ticketNumber, { value: price });
 
     console.log(`Bought edition for ${name}. txHash: ${buyTx.hash}`);
 

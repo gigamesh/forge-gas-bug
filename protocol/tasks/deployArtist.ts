@@ -4,14 +4,13 @@ import { task } from 'hardhat/config';
 const MAX_GAS_PRICE = 150_000_000_000; // wei
 const { baseURIs } = constants;
 
-task('deployUpgrade', 'Deploys an upgraded Artist.sol')
-  .addParam('artistVersion', 'The version number of the new Artist.sol implementation')
+task('deployArtist', 'Deploys an Artist implementation')
+  .addParam('artistVersion', 'The version number of the new Artist implementation')
   // .addParam('gasPrice', 'The gas price to use for the transaction')
   .setAction(async (args, hardhat) => {
     const baseURI = baseURIs[hardhat.network.name];
     const dummyArgsForArtistInit = [
       '0xB0A36b3CeDf210f37a5E7BC28d4b8E91D4E3C412', // rinkeby deployer address
-      '0',
       `Sound.xyz ArtistV${args.artistVersion}.sol`,
       `SOUND V${args.artistVersion}`,
       baseURI,
@@ -47,6 +46,7 @@ task('deployUpgrade', 'Deploys an upgraded Artist.sol')
           artistUpgrade.address
         }`
       );
+
       const initTx = await artistUpgrade.initialize(...dummyArgsForArtistInit, {
         gasLimit: 250_000,
       });
@@ -54,7 +54,11 @@ task('deployUpgrade', 'Deploys an upgraded Artist.sol')
       console.log('Initialization started:', initTx.hash);
       await initTx.wait();
 
-      console.log('Initialization confirmed. Verifying on etherscan...');
+      console.log('Initialization confirmed. Waiting for etherscan to index the bytecode...');
+
+      await new Promise((resolve) => setTimeout(resolve, 30_000));
+
+      console.log('Verifying on etherscan...');
 
       const options: any = {
         address: artistUpgrade.address,

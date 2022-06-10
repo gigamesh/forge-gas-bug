@@ -258,9 +258,9 @@ usersData
   });
 
 export const artistContracts = [
-  '0xc5627C5c94Ac304Ab35EfC00613c8281aF26C64f',
-  '0x44D9f85E1B015aD53Aea6b8cB0952c7a88105dA9',
-  '0xeEE6F0DDd6a83A69aFBf53d0f9071420A9de43e7',
+  '0xE552673771De4C8c1d57af5E94fe2C85990dCc66',
+  '0x577413333BcafaAdbCD83eC66A160374f64b10D6',
+  '0x41e658E2E3C27099777a28d663Cf9664d30A887b',
 ];
 
 const nowInSeconds = Math.floor(Date.now() / 1000);
