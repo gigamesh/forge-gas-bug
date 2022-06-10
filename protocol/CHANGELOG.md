@@ -1,5 +1,59 @@
 # @soundxyz/protocol
 
+## 7.0.0
+
+### Major Changes
+
+- a3e56a6: Enables Sound to transfer ownership of Artist proxies
+
+  - setOwnerOverride function
+  - soundRecoveryAddress view function
+
+- a3e56a6: Ensures tokenURI returns default URI if edition.baseURI is less than 4 chars long
+- a3e56a6: - Removes initialize function on ArtistCreatorV2
+  - Replaces ArtistV5 import with ArtistV5 function selector (signature hash)
+- a3e56a6: Enables setting baseURI on per-edition basis
+
+  - adds baseURI to Edition struct
+  - Adds setEditionBaseURI
+  - Adapts tokenURI to accomodate both types of baseURI
+
+- a3e56a6: Edition idempotency
+
+  - requires editionId to createEdition call
+
+- a3e56a6: - Deprecating atArtistId in ArtistCreator.
+
+  - Removing artistId arg in Artist initialization.
+  - Changing metadata uri to use contractAddress instead of artistId.
+  - Create2 idempotency using contract bytecode and sender address as salt.
+
+  deeper explanation:
+  https://www.notion.so/soundxyz/CreateArtist-Idempotency-ca6c7b3a18c34eb49ede944bb1bc41be
+
+### Minor Changes
+
+- 5fb2d13: Cleans up Artist/upgrades so tests are more isolated and avoiding global state
+
+  - adds `deployArtistProxyPostUpgrade`
+  - replaces global `artistPreUpgradeProxy` & `artistPostUpgradeProxy` with local copies
+
+- d1df3a3: Test refactor
+
+  - Uses setUpContract function for all tests
+  - Removes deployArtistImplementation (not using it and probably won't ever need it)
+  - Uses single createEdition function (returned from setUpContract)
+  - Removes global scope and duplicate variables across test files
+  - Generally makes test details more explicit
+
+- f5d3c50: Replaces utils/Strings.sol with OpenZeppelin's Strings.sol
+- a3e56a6: - Creates AccessManager.sol for role-based access control, which is a hybrid of OZ's
+  OwnableUpgradeable.sol & AccessControl.sol
+  - Replaces OwnableUpgradeable.sol with AccessManager.sol
+- 3fa1ff3: Ancillary pre-artistv5 changes
+- 7058b2c: Ignores old contracts from gas reports
+- 0bc6917: Adds license line to ArtistCreatorProxy
+
 ## 6.1.0
 
 ### Minor Changes
