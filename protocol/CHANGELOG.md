@@ -1,5 +1,16 @@
 # @soundxyz/protocol
 
+## 7.3.0
+
+### Minor Changes
+
+- ee03e55: deploy:local with new artist seed contract addresss
+
+### Patch Changes
+
+- Updated dependencies [ee03e55]
+  - @soundxyz/common@3.5.0
+
 ## 7.2.0
 
 ### Minor Changes

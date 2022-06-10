@@ -1,5 +1,11 @@
 # @soundxyz/common
 
+## 3.5.0
+
+### Minor Changes
+
+- ee03e55: New seed artist contract addresses
+
 ## 3.4.0
 
 ### Minor Changes
