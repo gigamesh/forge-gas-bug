@@ -1,5 +1,11 @@
 # @soundxyz/common
 
+## 3.4.0
+
+### Minor Changes
+
+- ffb4b56: Changes editionId to number
+
 ## 3.3.0
 
 ### Minor Changes
