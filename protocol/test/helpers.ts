@@ -44,6 +44,8 @@ export type EditionArgs = {
   endTime?: number | BigNumber;
   permissionedQuantity?: number | BigNumber;
   signerAddress?: string;
+  editionId?: number;
+  baseURI?: string;
 };
 
 type CustomConfigArgs = EditionArgs & {
@@ -121,8 +123,8 @@ export function getRandomAddress() {
 export async function deployArtistProxy({
   artistAccount,
   soundOwner,
-  artistCreatorVersion = 1,
-  artistContractName = 'ArtistV4',
+  artistCreatorVersion = 2,
+  artistContractName = 'ArtistV5',
 }: {
   artistAccount: SignerWithAddress;
   soundOwner: SignerWithAddress;
@@ -194,13 +196,18 @@ export async function createSplit({ splitMainAddress, splitInfo }: { splitMainAd
 }
 
 export async function setUpContract({
-  artistContractName = 'ArtistV4',
+  artistContractName = 'ArtistV5',
   artistCreatorVersion = 1,
   editionCount = 1,
   skipCreateEditions,
   ...customConfig
 }: CustomConfigArgs = {}) {
   const artistVersion = Number(artistContractName[artistContractName.length - 1]);
+
+  // ArtistV5 set up
+  if (artistVersion >= 5) {
+    artistCreatorVersion = 2;
+  }
 
   const { soundOwner, artist1: artistAccount, miscAccounts } = await getAccounts();
 
@@ -219,6 +226,8 @@ export async function setUpContract({
   const fundingRecipient = customConfig.fundingRecipient || artistAccount.address;
   const permissionedQuantity = customConfig.permissionedQuantity || BigNumber.from(0);
   const signerAddress = customConfig.signerAddress || soundOwner.address;
+  const editionId = customConfig.editionId || EDITION_ID;
+  const baseURI = customConfig.baseURI || '';
 
   async function createEdition({
     customDeployer,
@@ -248,6 +257,10 @@ export async function setUpContract({
       args.permissionedQuantity = permissionedQuantity;
       args.signerAddress = signerAddress;
     }
+    if (version >= 5) {
+      args.editionId = editionId;
+      args.baseURI = baseURI;
+    }
 
     // Merge default args with custom ones passed in for each test
     const mergedArgs = {
@@ -265,7 +278,11 @@ export async function setUpContract({
 
   if (!skipCreateEditions) {
     for (let editionId = 1; editionId <= editionCount; editionId++) {
-      const createEditionTx = await createEdition();
+      // Only pass editionId if we're on ArtistV5 or greater
+      const editionArgs = artistVersion >= 5 ? { editionId } : {};
+
+      const createEditionTx = await createEdition({ editionArgs });
+
       const editionReceipt = await createEditionTx.wait();
       const contractEvent = artistContract.interface.parseLog(editionReceipt.events[0]);
 
@@ -308,6 +325,7 @@ export const createEditions = async ({
   for (let editionId = 1; editionId <= editionCount; editionId++) {
     await createEdition({
       artistContract,
+      editionArgs: postUpgradeVersion >= 5 ? { editionId } : {},
       postUpgradeVersion,
     });
   }

@@ -3,23 +3,37 @@ import { helpers } from '@soundxyz/common';
 import { expect } from 'chai';
 import { Contract } from 'ethers';
 import { ethers, upgrades, waffle } from 'hardhat';
-
 import { BASE_URI, createArtist, EXAMPLE_ARTIST_NAME, EXAMPLE_ARTIST_SYMBOL } from '../helpers';
 
 const { getAuthSignature } = helpers;
 const { provider } = waffle;
 
-describe('ArtistCreator', () => {
+describe('ArtistCreator.sol (and subsequent versions)', () => {
   let artistCreator: Contract;
   let soundOwner: SignerWithAddress;
 
   const setUp = async () => {
     soundOwner = (await ethers.getSigners())[0];
 
+    // Deploy ArtistCreator v1 (deployProxy also initializes the proxy)
     const ArtistCreator = await ethers.getContractFactory('ArtistCreator');
-
     artistCreator = await upgrades.deployProxy(ArtistCreator, { kind: 'uups' });
     await artistCreator.deployed();
+
+    // Upgrade to latest ArtistCreator version
+    const ArtistCreatorV2Factory = await ethers.getContractFactory('ArtistCreatorV2');
+    artistCreator = await upgrades.upgradeProxy(artistCreator.address, ArtistCreatorV2Factory);
+
+    // Deploy latest Artist implementation
+    const Artist = await ethers.getContractFactory('ArtistV5');
+    const artistImpl = await Artist.deploy();
+    await artistImpl.deployed();
+
+    // Upgrade beacon to point to latest Artist implementation
+    const beaconAddress = await artistCreator.beaconAddress();
+    const beaconContract = await ethers.getContractAt('UpgradeableBeacon', beaconAddress, soundOwner);
+    const beaconTx = await beaconContract.upgradeTo(artistImpl.address);
+    await beaconTx.wait();
   };
 
   it('deploys', async () => {
@@ -79,7 +93,6 @@ describe('ArtistCreator', () => {
     it('deploys artist contracts with expected event data', async () => {
       await setUp();
       const artistEOAs = await ethers.getSigners();
-
       for (let i = 1; i < 10; i++) {
         const tx = await createArtist(
           artistCreator,
@@ -88,7 +101,6 @@ describe('ArtistCreator', () => {
           EXAMPLE_ARTIST_SYMBOL + i,
           BASE_URI
         );
-
         const receipt = await tx.wait();
         const eventData = receipt.events.find((e) => e.event === 'CreatedArtist');
 
@@ -99,7 +111,6 @@ describe('ArtistCreator', () => {
     it(`prevents deployment if admin signature is invalid`, async () => {
       await setUp();
       const artistEOAs = await ethers.getSigners();
-
       const chainId = (await provider.getNetwork()).chainId;
 
       for (let i = 0; i < 10; i++) {
@@ -110,12 +121,48 @@ describe('ArtistCreator', () => {
           chainId,
           provider,
         });
+
         const tx = artistCreator
           .connect(artistEOA)
           .createArtist(signature, EXAMPLE_ARTIST_NAME + i, EXAMPLE_ARTIST_SYMBOL + i, BASE_URI);
 
-        expect(tx).to.be.revertedWith('invalid authorization signature');
+        await expect(tx).to.be.revertedWith('invalid authorization signature');
       }
+    });
+
+    it(`prevents deployment of a proxy with the same args`, async () => {
+      await setUp();
+      const artistEOAs = await ethers.getSigners();
+      const chainId = (await provider.getNetwork()).chainId;
+
+      const artistEOA = artistEOAs[0];
+      const signature = await getAuthSignature({
+        artistWalletAddr: artistEOA.address,
+        privateKey: process.env.ADMIN_PRIVATE_KEY,
+        chainId,
+        provider,
+      });
+
+      // Create proxy
+      const tx1 = artistCreator
+        .connect(artistEOA)
+        .createArtist(signature, EXAMPLE_ARTIST_NAME, EXAMPLE_ARTIST_SYMBOL, BASE_URI);
+
+      await expect(tx1).not.to.be.reverted;
+
+      // Try to create proxy with same args
+      const tx2 = artistCreator
+        .connect(artistEOA)
+        .createArtist(signature, EXAMPLE_ARTIST_NAME, EXAMPLE_ARTIST_SYMBOL, BASE_URI);
+
+      await expect(tx2).to.be.reverted;
+
+      // Create proxy with diff args
+      const tx3 = artistCreator
+        .connect(artistEOA)
+        .createArtist(signature, EXAMPLE_ARTIST_NAME, 'unique symbol arg', BASE_URI);
+
+      await expect(tx3).not.to.be.reverted;
     });
   });
 });

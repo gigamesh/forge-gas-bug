@@ -31,7 +31,7 @@ export function setSignerAddressTests() {
 
     const tx = artistContract.connect(miscAccounts[0]).setSignerAddress(EDITION_ID, NULL_ADDRESS);
 
-    await expect(tx).to.be.revertedWith('Ownable: caller is not the owner');
+    await expect(tx).to.be.revertedWith('unauthorized');
   });
 
   it('prevents attempt to set null address', async () => {
@@ -74,7 +74,7 @@ export function setPermissionedQuantityTests() {
 
     const tx = artistContract.connect(notOwner).setPermissionedQuantity(EDITION_ID, 69);
 
-    await expect(tx).to.be.revertedWith('Ownable: caller is not the owner');
+    await expect(tx).to.be.revertedWith('unauthorized');
   });
 
   it('prevents attempt to set permissioned quantity when there is no signer address', async () => {
@@ -116,6 +116,78 @@ export function setPermissionedQuantityTests() {
 
     await expect(event.args.editionId).to.equal(EDITION_ID);
     await expect(event.args.permissionedQuantity.toString()).to.equal(newPermissionedQuantity.toString());
+  });
+}
+
+export async function setBaseURITests() {
+  it('only allows owner to call function', async () => {
+    const { artistContract, miscAccounts } = await setUpContract({});
+
+    const tx = artistContract.connect(miscAccounts[0]).setEditionBaseURI(EDITION_ID, 'https://example.com');
+
+    await expect(tx).to.be.revertedWith('unauthorized');
+  });
+
+  it('reverts on non-existent edition', async () => {
+    const { artistContract, artistAccount } = await setUpContract({ skipCreateEditions: true });
+
+    const tx1 = artistContract.connect(artistAccount).setEditionBaseURI(EDITION_ID, 'https://example.com');
+    const tx2 = artistContract.connect(artistAccount).setEditionBaseURI(42069, 'https://example.com');
+
+    await expect(tx1).to.be.revertedWith('Nonexistent edition');
+    await expect(tx2).to.be.revertedWith('Nonexistent edition');
+  });
+
+  it('sets the edition baseURI', async () => {
+    const { artistContract, artistAccount, price } = await setUpContract();
+    const newBaseURI = 'https://example.com/';
+
+    await artistContract
+      .connect(artistAccount)
+      .buyEdition(EDITION_ID, EMPTY_SIGNATURE, NULL_TICKET_NUM, { value: price });
+
+    const tokenId = getTokenId(EDITION_ID, 1);
+    const originalTokenURI = await artistContract.tokenURI(tokenId);
+
+    const tx = await artistContract.connect(artistAccount).setEditionBaseURI(EDITION_ID, newBaseURI);
+    await tx.wait();
+
+    const editionInfo = await artistContract.editions(EDITION_ID);
+    const newTokenURI = await artistContract.tokenURI(tokenId);
+
+    await expect(originalTokenURI).to.equal(`${BASE_URI}${artistContract.address.toLowerCase()}/${tokenId.toString()}`);
+    await expect(editionInfo.baseURI).to.equal(newBaseURI);
+    await expect(newTokenURI).to.equal(`${newBaseURI}${tokenId.toString()}/metadata.json`);
+  });
+
+  it('continues to use default baseURI if edition.baseURI is equal to or less than 3 chars (ex: artist accidentally sets to empty spaces)', async () => {
+    const { artistContract, artistAccount, price } = await setUpContract();
+    const newBaseURI = '   ';
+    await artistContract
+      .connect(artistAccount)
+      .buyEdition(EDITION_ID, EMPTY_SIGNATURE, NULL_TICKET_NUM, { value: price });
+    const tokenId = getTokenId(EDITION_ID, 1);
+    const tx = await artistContract.connect(artistAccount).setEditionBaseURI(EDITION_ID, newBaseURI);
+    await tx.wait();
+    const newTokenURI = await artistContract.tokenURI(tokenId);
+    await expect(newTokenURI).to.equal(`${BASE_URI}${artistContract.address.toLowerCase()}/${tokenId.toString()}`);
+  });
+
+  it('emits event data', async () => {
+    const { artistContract, artistAccount, price } = await setUpContract();
+    const newBaseURI = 'https://example.com/';
+
+    await artistContract
+      .connect(artistAccount)
+      .buyEdition(EDITION_ID, EMPTY_SIGNATURE, NULL_TICKET_NUM, { value: price });
+
+    const tx = await artistContract.connect(artistAccount).setEditionBaseURI(EDITION_ID, newBaseURI);
+    const receipt = await tx.wait();
+
+    const eventData = receipt.events.find((e) => e.event === 'BaseURISet').args;
+
+    await expect(eventData.baseURI).to.be.equal(newBaseURI);
+    await expect(eventData.editionId).to.be.equal(EDITION_ID);
   });
 }
 
@@ -207,7 +279,7 @@ export async function contractURITests() {
 
     const uri = await artistContract.contractURI();
 
-    expect(uri).to.equal(`${BASE_URI}${EXAMPLE_ARTIST_ID}/storefront`);
+    expect(uri).to.equal(`${BASE_URI}${artistContract.address.toLowerCase()}/storefront`);
   });
 }
 
@@ -351,5 +423,25 @@ export function checkTicketNumbersTests() {
     const actualList = await artistContract.checkTicketNumbers(EDITION_ID, ticketNumbers);
 
     await expect(expectedList).to.deep.eq(actualList);
+  });
+}
+
+export function setOwnerOverrideTests() {
+  it(`Sound recovery address can transfer ownership of artist contract`, async () => {
+    const { artistContract, soundOwner } = await setUpContract({ artistContractName: 'MOCK_ArtistV5' });
+
+    await artistContract.connect(soundOwner).setOwnerOverride(soundOwner.address);
+    const newOwner = await artistContract.owner();
+
+    await expect(newOwner).to.eq(soundOwner.address);
+  });
+
+  it(`setOwnerOverride reverts if called by any address that isn't the owner (artist) or address returned from soundRecoveryAddress`, async () => {
+    const { artistContract, miscAccounts } = await setUpContract({ artistContractName: 'MOCK_ArtistV5' });
+
+    for (const account of miscAccounts) {
+      const setOwnerOverride = artistContract.connect(account).setOwnerOverride(account.address);
+      await expect(setOwnerOverride).to.be.revertedWith('unauthorized');
+    }
   });
 }

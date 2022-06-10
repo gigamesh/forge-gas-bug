@@ -1,12 +1,26 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-pragma solidity 0.8.7;
+pragma solidity 0.8.14;
 
 /*
- ██████  ██████  ██    ██ ███    ██ ██████  
-██      ██    ██ ██    ██ ████   ██ ██   ██ 
-███████ ██    ██ ██    ██ ██ ██  ██ ██   ██ 
-     ██ ██    ██ ██    ██ ██  ██ ██ ██   ██ 
-███████  ██████   ██████  ██   ████ ██████ 
+               ^###############################################&5               
+               ?@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@&               
+   !PPPPPPPPPPP&@@@@@@@@@@@@?!!!!!!!!!!7&@@@@@@@@@@@@@@@@@@@@@@@@BPPPPPPPPPPJ   
+   B@@@@@@@@@@@@@@@@@@@@@@@&            #@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@.  
+   B@@@@@@@@@@@@@@@@@@@@@@@&            ~55555555555&@@@@@@@@@@@@@@@@@@@@@@@@.  
+   B@@@@@@@@@@@@@@@@@@@@@@@&                        J@@@@@@@@@@@@@@@@@@@@@@@@.  
+   B@@@@@@@@@@@@@@@@@@@@@@@&~::::::::::::::::::::::.~B######################P   
+   B@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@7                           
+   5@&&&&&&&&&&&&&&&&&&&&&&@@@@@@@@@@@@@@@@@@@@@@@@@5                           
+    .......................!@@@@@@@@@@@@@@@@@@@@@@@@@&&&&&&&&&&&&&&&&&&&&&&&B   
+                           .@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@&   
+   7BBBBBBBBBBBBBBBBBBBBBBBY:^^^^^^^^^^^^^^^^^^^^^^^B@@@@@@@@@@@@@@@@@@@@@@@&   
+   B@@@@@@@@@@@@@@@@@@@@@@@&                        Y@@@@@@@@@@@@@@@@@@@@@@@&   
+   B@@@@@@@@@@@@@@@@@@@@@@@@PJYYYYYYYYY?            5@@@@@@@@@@@@@@@@@@@@@@@&   
+   B@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@:           Y@@@@@@@@@@@@@@@@@@@@@@@&   
+   !GGGGGGGGGGG&@@@@@@@@@@@@@@@@@@@@@@@@5~~~~~~~~~~~#@@@@@@@@@@@@BGGGGGGGGGGJ   
+               J@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@G               
+               ~&&&&#&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&?                 
+
 */
 
 import '@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol';
@@ -15,22 +29,26 @@ import '@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol';
 import '@openzeppelin/contracts-upgradeable/utils/CountersUpgradeable.sol';
 import '@openzeppelin/contracts-upgradeable/utils/cryptography/ECDSAUpgradeable.sol';
 import '@openzeppelin/contracts/proxy/beacon/BeaconProxy.sol';
-import '@openzeppelin/contracts/proxy/beacon/UpgradeableBeacon.sol';
-import './Artist.sol';
 
+/// @title The Artist Creator factory contract
+/// @author Sound.xyz - @gigamesh & @vigneshka
 contract ArtistCreatorV2 is Initializable, UUPSUpgradeable, OwnableUpgradeable {
     using CountersUpgradeable for CountersUpgradeable.Counter;
     using ECDSAUpgradeable for bytes32;
 
     // ============ Storage ============
 
+    // Typehash of the signed message provided to createArtist
     bytes32 public constant MINTER_TYPEHASH = keccak256('Deployer(address artistWallet)');
+    // ID for each Artist proxy // DEPRECATED in ArtistCreatorV2
     CountersUpgradeable.Counter private atArtistId;
-    // address used for signature verification, changeable by owner
+    // Address used for signature verification, changeable by owner
     address public admin;
+    // Domain separator is used to prevent replay attacks using signatures from different networks
     bytes32 public DOMAIN_SEPARATOR;
+    // The address of UpgradeableBeacon, which was deployed in the initialize function of ArtistCreator.sol
     address public beaconAddress;
-    // registry of created contracts
+    // Array of the Artist proxies // DEPRECATED in ArtistCreatorV2
     address[] public artistContracts;
 
     // ============ Events ============
@@ -40,25 +58,7 @@ contract ArtistCreatorV2 is Initializable, UUPSUpgradeable, OwnableUpgradeable {
 
     // ============ Functions ============
 
-    /// Initializes factory
-    function initialize() public initializer {
-        __Ownable_init_unchained();
-
-        // set admin for artist deployment authorization
-        admin = msg.sender;
-        DOMAIN_SEPARATOR = keccak256(abi.encode(keccak256('EIP712Domain(uint256 chainId)'), block.chainid));
-
-        // set up beacon with msg.sender as the owner
-        UpgradeableBeacon _beacon = new UpgradeableBeacon(address(new Artist()));
-        _beacon.transferOwnership(msg.sender);
-        beaconAddress = address(_beacon);
-
-        // Set artist id start to be 1 not 0
-        atArtistId.increment();
-    }
-
-    /// Creates a new artist contract as a factory with a deterministic address
-    /// Important: None of these fields (except the Url fields with the same hash) can be changed after calling
+    /// @notice Creates a new artist contract as a factory with a deterministic address
     /// @param _name Name of the artist
     function createArtist(
         bytes calldata signature,
@@ -68,36 +68,30 @@ contract ArtistCreatorV2 is Initializable, UUPSUpgradeable, OwnableUpgradeable {
     ) public returns (address) {
         require((getSigner(signature) == admin), 'invalid authorization signature');
 
-        BeaconProxy proxy = new BeaconProxy(
+        bytes32 salt = bytes32(uint256(uint160(_msgSender())));
+
+        // salted contract creation using create2
+        BeaconProxy proxy = new BeaconProxy{salt: salt}(
             beaconAddress,
-            abi.encodeWithSelector(
-                Artist(address(0)).initialize.selector,
-                msg.sender,
-                atArtistId.current(),
-                _name,
-                _symbol,
-                _baseURI
-            )
+            // 0x5f1e6f6d is the initialize function selector on ArtistV5 (hash of "function initialize(address, string, string, string)")
+            abi.encodeWithSelector(0x5f1e6f6d, _msgSender(), _name, _symbol, _baseURI)
         );
 
-        // add to registry
-        artistContracts.push(address(proxy));
-
-        emit CreatedArtist(atArtistId.current(), _name, _symbol, address(proxy));
-
-        atArtistId.increment();
+        // the first parameter, artistId, is deprecated
+        emit CreatedArtist(0, _name, _symbol, address(proxy));
 
         return address(proxy);
     }
 
-    /// Get signer address of signature
+    /// @notice Gets signer address of signature
+    /// @param signature Signature of the message
     function getSigner(bytes calldata signature) public view returns (address) {
         require(admin != address(0), 'whitelist not enabled');
         // Verify EIP-712 signature by recreating the data structure
         // that we signed on the client side, and then using that to recover
         // the address that signed the signature for this data.
         bytes32 digest = keccak256(
-            abi.encodePacked('\x19\x01', DOMAIN_SEPARATOR, keccak256(abi.encode(MINTER_TYPEHASH, msg.sender)))
+            abi.encodePacked('\x19\x01', DOMAIN_SEPARATOR, keccak256(abi.encode(MINTER_TYPEHASH, _msgSender())))
         );
         // Use the recover method to see what address was used to create
         // the signature on this data.
@@ -107,12 +101,14 @@ contract ArtistCreatorV2 is Initializable, UUPSUpgradeable, OwnableUpgradeable {
         return recoveredAddress;
     }
 
-    /// Sets the admin for authorizing artist deployment
+    /// @notice Sets the admin for authorizing artist deployment
     /// @param _newAdmin address of new admin
     function setAdmin(address _newAdmin) external {
         require(owner() == _msgSender() || admin == _msgSender(), 'invalid authorization');
         admin = _newAdmin;
     }
 
+    /// @notice Authorizes upgrades
+    /// @dev DO NOT REMOVE!
     function _authorizeUpgrade(address) internal override onlyOwner {}
 }

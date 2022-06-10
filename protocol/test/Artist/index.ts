@@ -1,5 +1,6 @@
 import '@nomiclabs/hardhat-ethers';
 
+import { adminTests } from './admin';
 import { buyEditionTests } from './buyEdition';
 import { createEditionTests } from './createEdition';
 import { deploymentTests } from './deployment';
@@ -15,6 +16,8 @@ import {
   setSignerAddressTests,
   totalSupplyTests,
   transferFromTests,
+  setOwnerOverrideTests,
+  setBaseURITests,
 } from './others';
 import { setEndTimeTests, setStartTimeTests } from './timing';
 import { withdrawFundsTests } from './withdrawFunds';
@@ -52,6 +55,10 @@ describe('Artist proxy', () => {
     setPermissionedQuantityTests();
   });
 
+  describe('setBaseURI', () => {
+    setBaseURITests();
+  });
+
   describe('getApproved', () => {
     getApprovedTests();
   });
@@ -82,6 +89,14 @@ describe('Artist proxy', () => {
 
   describe('checkTicketNumbers', () => {
     checkTicketNumbersTests();
+  });
+
+  describe('setOwnerOverride', () => {
+    setOwnerOverrideTests();
+  });
+
+  describe('admin functionality', () => {
+    adminTests();
   });
 
   describe('end-to-end tests', () => {

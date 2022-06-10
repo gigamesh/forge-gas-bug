@@ -15,6 +15,8 @@ task('createEdition', 'Create NFT edition')
     const [deployer] = await ethers.getSigners();
     const artistContract = await ethers.getContractAt(`ArtistV${args.artistVersion}`, args.address, deployer);
 
+    const editionCount = await artistContract.editionCount();
+
     const tx = await artistContract.createEdition(
       deployer.address, // funding recipient
       parseEther('0.1'), // price
@@ -24,6 +26,7 @@ task('createEdition', 'Create NFT edition')
       MAX_UINT32, // end time
       0, // permissioned quantity
       deployer.address, // signer
+      editionCount + 1, // editionId
       { gasLimit: 1_000_000 }
     );
 

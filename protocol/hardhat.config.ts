@@ -40,15 +40,15 @@ const config: HardhatUserConfig = {
   solidity: {
     compilers: [
       {
-        version: '0.8.7',
-        ...compilerSettings,
-      },
-      {
         version: '0.8.4',
         ...compilerSettings,
       },
       {
-        version: '0.5.17',
+        version: '0.8.7',
+        ...compilerSettings,
+      },
+      {
+        version: '0.8.14',
         ...compilerSettings,
       },
     ],
@@ -103,7 +103,7 @@ const config: HardhatUserConfig = {
       'ArtistV2.sol',
       'ArtistV3.sol',
       'ArtistV4.sol',
-      'ArtistV3Test.sol',
+      'ArtistV6Test.sol',
       'ArtistCreator.sol',
     ],
   },

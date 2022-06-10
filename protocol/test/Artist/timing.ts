@@ -10,7 +10,7 @@ export function setStartTimeTests() {
 
     for (const notOwner of miscAccounts) {
       const tx = artistContract.connect(notOwner).setStartTime(EDITION_ID, newTime);
-      await expect(tx).to.be.revertedWith('Ownable: caller is not the owner');
+      await expect(tx).to.be.revertedWith('unauthorized');
     }
   });
 
@@ -32,7 +32,7 @@ export function setStartTimeTests() {
     const event = receipt.events.find((e) => e.event === 'AuctionTimeSet');
 
     await expect(event.args.timeType).to.eq(0);
-    await expect(event.args.editionId.toString()).to.eq(EDITION_ID.toString());
+    await expect(event.args.editionId).to.eq(EDITION_ID.toString());
     await expect(event.args.newTime.toString()).to.eq(newTime.toString());
   });
 }
@@ -46,7 +46,7 @@ export function setEndTimeTests() {
     for (const notOwner of miscAccounts) {
       const tx = artistContract.connect(notOwner).setEndTime(EDITION_ID, newTime);
 
-      await expect(tx).to.be.revertedWith('Ownable: caller is not the owner');
+      await expect(tx).to.be.revertedWith('unauthorized');
     }
   });
 
@@ -68,7 +68,7 @@ export function setEndTimeTests() {
     const event = receipt.events.find((e) => e.event === 'AuctionTimeSet');
 
     await expect(event.args.timeType).to.eq(1);
-    await expect(event.args.editionId.toString()).to.eq(EDITION_ID.toString());
+    await expect(event.args.editionId).to.eq(EDITION_ID.toString());
     await expect(event.args.newTime.toString()).to.eq(newTime.toString());
   });
 }

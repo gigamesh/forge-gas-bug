@@ -161,6 +161,7 @@ export function buyEditionTests() {
       artistAccount: miscAccounts[0],
       soundOwner,
     });
+
     const buyer = miscAccounts[1];
     const ticketNumber = '0';
     const signature = await getPresaleSignature({
@@ -471,7 +472,7 @@ export function buyEditionTests() {
 
       const tokenId = getTokenId(editionId, tokenSerialNum.toString());
       const resp = await artistContract.tokenURI(tokenId);
-      const tokenURI = `${BASE_URI}${EXAMPLE_ARTIST_ID}/${editionId}/${tokenId.toString()}`;
+      const tokenURI = `${BASE_URI}${artistContract.address.toLowerCase()}/${tokenId.toString()}`;
 
       await expect(resp).to.eq(tokenURI);
     }

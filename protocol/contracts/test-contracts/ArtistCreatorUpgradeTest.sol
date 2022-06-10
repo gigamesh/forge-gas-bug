@@ -116,7 +116,7 @@ contract ArtistCreatorUpgradeTest is Initializable, UUPSUpgradeable, OwnableUpgr
 
     function _authorizeUpgrade(address) internal override onlyOwner {}
 
-    function testFunction() public pure returns (uint256) {
+    function markOfTheBeast() public pure returns (uint256) {
         return 666;
     }
 }

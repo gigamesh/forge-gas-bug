@@ -28,13 +28,13 @@ import '@openzeppelin/contracts-upgradeable/token/ERC721/ERC721Upgradeable.sol';
 import '@openzeppelin/contracts-upgradeable/utils/CountersUpgradeable.sol';
 import '@openzeppelin/contracts/utils/cryptography/ECDSA.sol';
 import '@openzeppelin/contracts/utils/Strings.sol';
-import './utils/AccessManager.sol';
+import '../utils/AccessManager.sol';
 
 /// @title Artist
 /// @author SoundXYZ - @gigamesh & @vigneshka
 /// @notice This contract is used to create & sell song NFTs for the artist who owns the contract.
 /// @dev Started as a fork of Mirror's Editions.sol https://github.com/mirror-xyz/editions-v1/blob/main/contracts/Editions.sol
-contract ArtistV5 is ERC721Upgradeable, IERC2981Upgradeable, AccessManager {
+contract TEST_ArtistV6 is ERC721Upgradeable, IERC2981Upgradeable, AccessManager {
     // ================================
     // STORAGE
     // ================================
@@ -60,6 +60,8 @@ contract ArtistV5 is ERC721Upgradeable, IERC2981Upgradeable, AccessManager {
     mapping(uint256 => uint256) public withdrawnForEdition;
     // Used to track which tokens have been claimed. editionId -> index -> bit array
     mapping(uint256 => mapping(uint256 => uint256)) ticketNumbers;
+
+    uint256 public someNumber;
 
     // ================================
     // TYPES
@@ -585,5 +587,9 @@ contract ArtistV5 is ERC721Upgradeable, IERC2981Upgradeable, AccessManager {
         } else {
             return string.concat(baseURI, contractAddress, '/');
         }
+    }
+
+    function setSomeNumber(uint256 _someNumber) external {
+        someNumber = _someNumber;
     }
 }

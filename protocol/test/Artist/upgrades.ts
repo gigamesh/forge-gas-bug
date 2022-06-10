@@ -44,7 +44,7 @@ describe('Artist upgrades', () => {
     preUpgradeProxy?: Contract;
   }) => {
     const { soundOwner, artist1: artistAccount } = await getAccounts();
-    // Deploy v2 artist implementation
+    // Deploy new artist implementation
     const ArtistNewVersion = await ethers.getContractFactory(artistContractName);
     const artistNewImpl = await ArtistNewVersion.deploy();
     await artistNewImpl.deployed();
@@ -652,7 +652,115 @@ describe('Artist upgrades', () => {
       });
     });
   });
+
+  describe('ArtistV4 -> ArtistV5', () => {
+    describe('Artist proxy deployed before upgrade', () => {
+      it('can set admins', async () => {
+        const {
+          artistContract: preUpgradeProxy,
+          artistAccount,
+          price,
+          startTime,
+          endTime,
+          quantity,
+          artistCreator,
+          createEdition,
+        } = await setUpContract({ artistContractName: 'ArtistV4' });
+        const editionCount = 50;
+        // Add some storage to the contract
+        await createEditions({ artistContract: preUpgradeProxy, editionCount, createEdition });
+        // Upgrade
+        const upgradedProxy = await upgradeArtistImplementation({
+          artistContractName: 'ArtistV5',
+          preUpgradeProxy,
+          artistCreator,
+        });
+        // Test admin functionality
+        const role = ethers.utils.id('ADMIN');
+
+        for (let i = 0; i < 100; i++) {
+          const newAdmin = ethers.Wallet.fromMnemonic(process.env.MNEMONIC, `m/44'/60'/0'/0/${i}`);
+          await upgradedProxy.connect(artistAccount).grantRole(role, newAdmin.address);
+
+          const hasRole = await upgradedProxy.hasRole(role, newAdmin.address);
+
+          await expect(hasRole).to.be.true;
+        }
+
+        // Ensure storage hasn't been corrupted
+        for (let i = 0; i < editionCount; i++) {
+          const editionInfo = await upgradedProxy.editions(i + 1);
+          expect(editionInfo.price).to.equal(price);
+          expect(editionInfo.numSold).to.equal(0);
+          expect(editionInfo.permissionedQuantity).to.equal(0);
+          expect(editionInfo.startTime).to.equal(startTime);
+          expect(editionInfo.endTime).to.equal(endTime);
+          expect(editionInfo.quantity).to.equal(quantity);
+        }
+      });
+
+      it(`doesn't corrupt ownership after upgrade`, async () => {
+        const { artistContract: preUpgradeProxy, artistCreator } = await setUpContract({
+          artistContractName: 'ArtistV4',
+        });
+        const ownerBeforeUpgrade = await preUpgradeProxy.owner();
+
+        // Upgrade
+        const upgradedProxy = await upgradeArtistImplementation({
+          artistContractName: 'ArtistV5',
+          preUpgradeProxy,
+          artistCreator,
+        });
+
+        const ownerAfterUpgrade = await upgradedProxy.owner();
+
+        await expect(ownerBeforeUpgrade).to.equal(ownerAfterUpgrade);
+      });
+
+      it(`doesn't have corrupted data after next upgrade`, async () => {
+        const editionCount = 30;
+        const {
+          artistContract: preUpgradeProxy,
+          artistCreator,
+          price,
+          startTime,
+          endTime,
+          quantity,
+        } = await setUpContract({
+          artistContractName: 'ArtistV5',
+          editionCount,
+        });
+
+        // Upgrade
+        const upgradedProxy = await upgradeArtistImplementation({
+          artistContractName: 'TEST_ArtistV6',
+          preUpgradeProxy,
+          artistCreator,
+        });
+
+        // Ensure storage hasn't been corrupted
+        const someNumber = 12345678;
+        await upgradedProxy.setSomeNumber(someNumber);
+
+        const expectedNumber = await upgradedProxy.someNumber();
+
+        await expect(someNumber).to.equal(expectedNumber.toNumber());
+
+        for (let i = 0; i < editionCount; i++) {
+          const editionInfo = await upgradedProxy.editions(i + 1);
+          expect(editionInfo.price).to.equal(price);
+          expect(editionInfo.numSold).to.equal(0);
+          expect(editionInfo.permissionedQuantity).to.equal(0);
+          expect(editionInfo.startTime).to.equal(startTime);
+          expect(editionInfo.endTime).to.equal(endTime);
+          expect(editionInfo.quantity).to.equal(quantity);
+        }
+      });
+    });
+  });
 });
+
+//================== REUSABLE TESTS ==================/
 
 const setStartTimeTest = async (artistContract: Contract) => {
   const newTime = 1743324758;

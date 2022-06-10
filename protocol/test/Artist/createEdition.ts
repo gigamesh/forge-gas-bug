@@ -2,7 +2,7 @@ import chai, { expect } from 'chai';
 import { solidity } from 'ethereum-waffle';
 import { BigNumber } from 'ethers';
 
-import { currentSeconds, EDITION_ID, MAX_UINT32, NULL_ADDRESS, setUpContract } from '../helpers';
+import { currentSeconds, EDITION_ID, MAX_UINT32, NULL_ADDRESS, setUpContract, getRandomInt } from '../helpers';
 
 chai.use(solidity);
 
@@ -68,7 +68,7 @@ export function createEditionTests() {
           fundingRecipient: notOwner.address,
         },
       });
-      await expect(tx).to.be.revertedWith('Ownable: caller is not the owner');
+      await expect(tx).to.be.revertedWith('unauthorized');
       editionId++;
     }
   });
@@ -143,12 +143,34 @@ export function createEditionTests() {
     const tx = createEdition({
       editionArgs: {
         quantity: 2,
-
         permissionedQuantity: 1,
         signerAddress: NULL_ADDRESS,
       },
     });
 
     await expect(tx).to.revertedWith('Signer address cannot be 0');
+  });
+
+  it(`reverts if editionID is incorrect`, async () => {
+    const { artistContract, artistAccount, price, royaltyBPS, startTime, endTime } = await setUpContract();
+
+    for (let i = 0; i < 20; i++) {
+      const wrongEditionId = getRandomInt(69, 420);
+
+      const tx = artistContract.connect(artistAccount).createEdition(
+        artistAccount.address,
+        price,
+        2,
+        royaltyBPS,
+        startTime,
+        endTime,
+        1,
+        NULL_ADDRESS, // signerAddress
+        wrongEditionId,
+        '' // baseUri
+      );
+
+      await expect(tx).to.revertedWith('Wrong edition ID');
+    }
   });
 }
