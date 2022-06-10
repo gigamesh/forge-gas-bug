@@ -1,5 +1,11 @@
 # @soundxyz/common
 
+## 3.6.0
+
+### Minor Changes
+
+- 3bc5860: new baseURIs
+
 ## 3.5.0
 
 ### Minor Changes
