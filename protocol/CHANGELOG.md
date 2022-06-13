@@ -1,5 +1,11 @@
 # @soundxyz/protocol
 
+## 8.0.0
+
+### Major Changes
+
+- 81ec5bf: Make hardhat peer dependency (has to be manually installed alongside this package)
+
 ## 7.4.1
 
 ### Patch Changes
