@@ -12,3 +12,9 @@ env*
 .vscode
 typechain
 .turbo
+
+
+# foundry
+out/
+cache/
+artifacts/

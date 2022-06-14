@@ -92,6 +92,7 @@ const config: HardhatUserConfig = {
     // },
   },
   paths: {
+    sources: 'contracts/',
     deployments: 'src/deployments',
     artifacts: 'src/artifacts',
   },

@@ -1,0 +1,13 @@
+[default]
+libraries = []
+libs = ['node_modules','lib']
+optimizer = true
+optimizer_runs = 200
+src = 'protocol/contracts'
+out = 'protocol/out'
+test = 'protocol/forge-tests'
+remappings = [
+  "forge-std=lib/forge-std/src/",
+  "@openzeppelin=protocol/node_modules/@openzeppelin/",
+  "@rari-capital/solmate=protocol/node_modules/@rari-capital/solmate/",
+]
