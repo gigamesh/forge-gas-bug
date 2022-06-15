@@ -1,10 +1,11 @@
-import { SignerWithAddress } from '@nomiclabs/hardhat-ethers/dist/src/signers';
 import { helpers } from '@soundxyz/common';
 import { BigNumber, Contract } from 'ethers';
 import { parseEther } from 'ethers/lib/utils';
 import { ethers, upgrades, waffle } from 'hardhat';
 
 import { SplitMain__factory } from '../typechain';
+
+import type { SignerWithAddress } from '@nomiclabs/hardhat-ethers/signers';
 
 export type DeployArtistFn = typeof deployArtistProxy;
 
