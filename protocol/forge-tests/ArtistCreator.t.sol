@@ -1,13 +1,10 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-pragma solidity 0.8.7;
+pragma solidity ^0.8.14;
 
-import 'forge-std/Test.sol';
 import './TestConfig.sol';
-import '../contracts/ArtistCreator.sol';
-import '../contracts/Artist.sol';
 import '@openzeppelin/contracts/proxy/beacon/BeaconProxy.sol';
 
-contract ArtistCreatorTest is Test, TestConfig {
+contract ArtistCreatorTest is TestConfig {
     event CreatedArtist(uint256 artistId, string name, string symbol, address indexed artistAddress);
 
     /***********************************
@@ -16,7 +13,7 @@ contract ArtistCreatorTest is Test, TestConfig {
 
     // Asserts owner() is correct
     function test_owner() public {
-        assertEq(artistCreator.owner(), ADMIN_ADDRESS);
+        assertEq(artistCreator.owner(), SOUND_ADMIN_ADDRESS);
     }
 
     // Transfers ownership to a new address
@@ -24,7 +21,7 @@ contract ArtistCreatorTest is Test, TestConfig {
         address newOwner1 = address(0x1234567890123456789012345678901234567890);
         address newOwner2 = address(0x1234567890123456789012345678901234567891);
 
-        vm.prank(ADMIN_ADDRESS);
+        vm.prank(SOUND_ADMIN_ADDRESS);
         artistCreator.transferOwnership(newOwner1);
         assertEq(artistCreator.owner(), newOwner1);
 
@@ -46,14 +43,14 @@ contract ArtistCreatorTest is Test, TestConfig {
 
     // Asserts admin() is correct
     function test_admin() public {
-        assertEq(artistCreator.admin(), ADMIN_ADDRESS);
+        assertEq(artistCreator.admin(), SOUND_ADMIN_ADDRESS);
     }
 
     // Asserts setAdmin can set a new admin address
     function test_setAdmin() public {
         address newAdmin = address(0x1234567890123456789012345678901234567666);
 
-        vm.prank(ADMIN_ADDRESS);
+        vm.prank(SOUND_ADMIN_ADDRESS);
         artistCreator.setAdmin(newAdmin);
 
         assertEq(artistCreator.admin(), newAdmin);
@@ -73,9 +70,8 @@ contract ArtistCreatorTest is Test, TestConfig {
 
     // Deploys artist contracts with expected event data
     function test_createArtist() public {
-        for (uint256 i = 0; i < keyPairs.length; i++) {
-            uint256 artistId = i + 1;
-            address fakeArtistAddr = vm.addr(keyPairs[i]);
+        for (uint256 i = 0; i < privateKeys.length; i++) {
+            address fakeArtistAddr = vm.addr(privateKeys[i]);
 
             bytes memory signature = getCreateArtistSignature(fakeArtistAddr);
 
@@ -93,9 +89,10 @@ contract ArtistCreatorTest is Test, TestConfig {
                 call returns the artist proxy address we need to pass to the test event.
                 https://t.me/foundry_support/10892
             */
+
             vm.expectEmit(false, false, false, true);
 
-            emit CreatedArtist(artistId, artistName, artistSymbol, address(0));
+            emit CreatedArtist(0, artistName, artistSymbol, address(0));
 
             address artistProxyAddr = artistCreator.createArtist(signature, artistName, artistSymbol, baseURI);
 
@@ -108,8 +105,8 @@ contract ArtistCreatorTest is Test, TestConfig {
 
     // Prevents deployment if admin signature is invalid.
     function testFail_createArtist() public {
-        for (uint256 i = 0; i < keyPairs.length; i++) {
-            address fakeArtistAddr = vm.addr(keyPairs[i]);
+        for (uint256 i = 0; i < privateKeys.length; i++) {
+            address fakeArtistAddr = vm.addr(privateKeys[i]);
 
             // Build auth signature
             // (equivalent to ethers.js wallet._signTypedData())

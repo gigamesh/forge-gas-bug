@@ -46,7 +46,7 @@ export async function endToEndTests() {
 
     const blockNum = await provider.getBlockNumber();
     const block = await provider.getBlock(blockNum);
-    const secondsUntilStart = 10;
+    const secondsUntilStart = 100;
     const startTime = BigNumber.from(block.timestamp).add(secondsUntilStart);
 
     const { artistContract, price, miscAccounts } = await setUpContract({

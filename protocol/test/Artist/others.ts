@@ -10,7 +10,6 @@ import {
   currentSeconds,
   EDITION_ID,
   EMPTY_SIGNATURE,
-  EXAMPLE_ARTIST_ID,
   getRandomBN,
   getRandomInt,
   getTokenId,

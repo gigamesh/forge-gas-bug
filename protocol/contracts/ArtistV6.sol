@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-pragma solidity 0.8.14;
+pragma solidity ^0.8.14;
 
 /*
                ^###############################################&5               
@@ -28,39 +28,13 @@ import '@openzeppelin/contracts-upgradeable/token/ERC721/ERC721Upgradeable.sol';
 import '@openzeppelin/contracts-upgradeable/utils/CountersUpgradeable.sol';
 import '@openzeppelin/contracts/utils/cryptography/ECDSA.sol';
 import '@openzeppelin/contracts/utils/Strings.sol';
-import './utils/AccessManager.sol';
+import './auxillary/AccessManager.sol';
 
 /// @title Artist
 /// @author SoundXYZ - @gigamesh & @vigneshka
 /// @notice This contract is used to create & sell song NFTs for the artist who owns the contract.
 /// @dev Started as a fork of Mirror's Editions.sol https://github.com/mirror-xyz/editions-v1/blob/main/contracts/Editions.sol
 contract ArtistV6 is ERC721Upgradeable, IERC2981Upgradeable, AccessManager {
-    // ================================
-    // STORAGE
-    // ================================
-
-    // The permissioned typehash (used for checking signature validity)
-    bytes32 public constant PERMISSIONED_SALE_TYPEHASH =
-        keccak256('EditionInfo(address contractAddress,address buyerAddress,uint256 editionId,uint256 ticketNumber)');
-    // Domain separator - used to prevent replay attacks using signatures from different networks
-    bytes32 public immutable DOMAIN_SEPARATOR;
-    // The default baseURI for the contract
-    string internal baseURI;
-
-    CountersUpgradeable.Counter public atTokenId; // DEPRECATED IN V3
-    CountersUpgradeable.Counter public atEditionId;
-
-    // Mapping of edition id to descriptive data.
-    mapping(uint256 => Edition) public editions;
-    // <DEPRECATED IN V3> Mapping of token id to edition id.
-    mapping(uint256 => uint256) public _tokenToEdition;
-    // The amount of funds that have been deposited for a given edition.
-    mapping(uint256 => uint256) public depositedForEdition;
-    // The amount of funds that have already been withdrawn for a given edition.
-    mapping(uint256 => uint256) public withdrawnForEdition;
-    // Used to track which tokens have been claimed. editionId -> index -> bit array
-    mapping(uint256 => mapping(uint256 => uint256)) ticketNumbers;
-
     // ================================
     // TYPES
     // ================================
@@ -95,6 +69,32 @@ contract ArtistV6 is ERC721Upgradeable, IERC2981Upgradeable, AccessManager {
         START,
         END
     }
+
+    // ================================
+    // STORAGE
+    // ================================
+
+    // The permissioned typehash (used for checking signature validity)
+    bytes32 public constant PERMISSIONED_SALE_TYPEHASH =
+        keccak256('EditionInfo(address contractAddress,address buyerAddress,uint256 editionId,uint256 ticketNumber)');
+    // Domain separator - used to prevent replay attacks using signatures from different networks
+    bytes32 public immutable DOMAIN_SEPARATOR;
+    // The default baseURI for the contract
+    string internal baseURI;
+
+    CountersUpgradeable.Counter public atTokenId; // DEPRECATED IN V3
+    CountersUpgradeable.Counter public atEditionId;
+
+    // Mapping of edition id to descriptive data.
+    mapping(uint256 => Edition) public editions;
+    // <DEPRECATED IN V3> Mapping of token id to edition id.
+    mapping(uint256 => uint256) public _tokenToEdition;
+    // The amount of funds that have been deposited for a given edition.
+    mapping(uint256 => uint256) public depositedForEdition;
+    // The amount of funds that have already been withdrawn for a given edition.
+    mapping(uint256 => uint256) public withdrawnForEdition;
+    // Used to track which tokens have been claimed. editionId -> index -> bit array
+    mapping(uint256 => mapping(uint256 => uint256)) ticketNumbers;
 
     // ================================
     // EVENTS
