@@ -9,6 +9,7 @@
     "ci:version": "changeset version && pnpm i --no-frozen-lockfile --lockfile-only --ignore-scripts",
     "deploy:local": "pnpm -r --filter=@soundxyz/protocol deploy:local",
     "deploy:rinkeby": "pnpm -r --filter=@soundxyz/protocol deploy:rinkeby",
+    "postinstall": "forge install",
     "ngrok": "ngrok http 3000",
     "prepare": "husky install",
     "pull-env": "npx vercel env pull .env",

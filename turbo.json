@@ -3,7 +3,7 @@
     "generate": {},
     "build": {
       "dependsOn": ["generate", "^build"],
-      "outputs": ["dist/**", "artifacts/**", "cache/**", "generated/**", "typechain/**"]
+      "outputs": ["dist/**", "artifacts/**", "cache/**", "generated/**", "typechain/**", "out/**"]
     },
     "test": {
       "outputs": []

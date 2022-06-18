@@ -14,7 +14,14 @@ privately at dev@sound.xyz.
 
 ---
 
-To install, you'll need [pnpm](https://pnpm.io/), then run: `pnpm i`
+#### Prerequisites
+
+- [pnpm](https://pnpm.io/)
+- [brew](https://brew.sh/)
+- [foundry](https://getfoundry.sh) - You can run `sh ./setup.sh` to install Foundry and its
+  dependencies.
+
+To install, run `pnpm install`
 
 To run tests: `pnpm test`
 

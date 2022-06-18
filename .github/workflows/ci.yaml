@@ -5,10 +5,19 @@ on:
       - main
   pull_request:
 
+env:
+  NEXT_PUBLIC_ALCHEMY_KEY: ${{ secrets.NEXT_PUBLIC_ALCHEMY_KEY }}
+  ADMIN_PRIVATE_KEY: ${{ secrets.ADMIN_PRIVATE_KEY }}
+  MNEMONIC: ${{ secrets.MNEMONIC }}
+
 jobs:
   test:
     runs-on: ubuntu-latest
     timeout-minutes: 10
+    defaults:
+      run:
+        shell: bash
+
     steps:
       - name: Clone repository
         uses: actions/checkout@v2
@@ -21,6 +30,12 @@ jobs:
         with:
           node-version: '16.x'
           cache: 'pnpm'
+
+      - name: Install Foundry
+        uses: foundry-rs/foundry-toolchain@v1
+        with:
+          version: nightly
+
       - name: Add NPM_TOKEN
         run: echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" >> .npmrc
         env:
@@ -29,9 +44,8 @@ jobs:
       - name: Install dependencies
         run: pnpm install
 
-      - name: Run hardhat tests
-        run: pnpm -r --filter=@soundxyz/protocol test:hh
-        env:
-          NEXT_PUBLIC_ALCHEMY_KEY: ${{ secrets.NEXT_PUBLIC_ALCHEMY_KEY }}
-          ADMIN_PRIVATE_KEY: ${{ secrets.ADMIN_PRIVATE_KEY }}
-          MNEMONIC: ${{ secrets.MNEMONIC }}
+      - name: Build
+        run: pnpm build
+
+      - name: Run Tests
+        run: pnpm -r --filter=@soundxyz/protocol test
