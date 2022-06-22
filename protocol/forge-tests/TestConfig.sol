@@ -3,6 +3,7 @@ pragma solidity ^0.8.14;
 
 import 'forge-std/Test.sol';
 import '@openzeppelin/contracts/proxy/beacon/UpgradeableBeacon.sol';
+import {SplitMain} from '../contracts/splits/SplitMain.sol';
 import '../contracts/ArtistCreatorProxy.sol';
 import '../contracts/ArtistCreator.sol';
 import '../contracts/ArtistCreatorV3.sol';
@@ -38,44 +39,44 @@ contract TestConfig is Test {
     bytes constant EMPTY_SIGNATURE = bytes('');
     uint256 immutable ADMIN_PRIV_KEY;
     address immutable SOUND_ADMIN_ADDRESS;
-    address payable immutable ARTIST1_ADDRESS;
-    address payable immutable ARTIST2_ADDRESS;
-    address payable immutable FUNDING_RECIPIENT;
-    address[8] BUYERS = [
-        (vm.addr(3)),
-        (vm.addr(4)),
-        (vm.addr(5)),
-        (vm.addr(6)),
-        (vm.addr(7)),
-        (vm.addr(8)),
-        (vm.addr(9)),
-        (vm.addr(10))
+    address immutable ARTIST1_ADDRESS;
+    address immutable ARTIST2_ADDRESS;
+    address immutable FUNDING_RECIPIENT;
+    address[10] BUYERS = [
+        ((vm.addr(1))),
+        ((vm.addr(2))),
+        ((vm.addr(3))),
+        ((vm.addr(4))),
+        ((vm.addr(5))),
+        ((vm.addr(6))),
+        ((vm.addr(7))),
+        ((vm.addr(8))),
+        ((vm.addr(9))),
+        ((vm.addr(10)))
     ];
 
+    // global values
+    uint256 constant PERCENTAGE_SCALE = 1e6;
+
     // default edition args
-    uint256 immutable PRICE;
-    uint32 immutable QUANTITY;
-    uint32 immutable ROYALTY_BPS;
-    uint32 immutable START_TIME;
-    uint32 immutable END_TIME;
-    uint32 immutable PERMISSIONED_QUANTITY;
+    uint256 constant PRICE = 1 ether;
+    uint32 constant QUANTITY = 10;
+    uint32 constant ROYALTY_BPS = 1000;
+    uint32 constant START_TIME = 0;
+    uint32 constant END_TIME = 2**32 - 1;
+    uint32 constant PERMISSIONED_QUANTITY = 0;
     address immutable SIGNER_ADDRESS;
-    uint256 immutable EDITION_ID;
+    uint256 constant EDITION_ID = 1;
     string constant BASE_URI = 'https://metadata.sound.xyz/';
+
+    SplitMain splitMain;
 
     constructor() {
         ADMIN_PRIV_KEY = privateKeys[0];
         SOUND_ADMIN_ADDRESS = vm.addr(ADMIN_PRIV_KEY);
-        ARTIST1_ADDRESS = payable(vm.addr(privateKeys[1]));
-        ARTIST2_ADDRESS = payable(vm.addr(privateKeys[2]));
+        ARTIST1_ADDRESS = vm.addr(privateKeys[1]);
+        ARTIST2_ADDRESS = vm.addr(privateKeys[2]);
         FUNDING_RECIPIENT = ARTIST1_ADDRESS;
-        PRICE = 1 ether;
-        QUANTITY = 10;
-        ROYALTY_BPS = 1000;
-        START_TIME = 0;
-        END_TIME = 2**32 - 1;
-        PERMISSIONED_QUANTITY = 0;
-        EDITION_ID = 1;
         SIGNER_ADDRESS = SOUND_ADMIN_ADDRESS;
 
         // Give each buyer some ETH
@@ -123,6 +124,10 @@ contract TestConfig is Test {
 
         // Upgrade to latest Artist implementation
         beacon.upgradeTo(artistImplementation);
+
+        // Set the nonce forward so the splitMain address is deterministic
+        vm.setNonce(SOUND_ADMIN_ADDRESS, 100);
+        splitMain = new SplitMain();
 
         vm.stopPrank();
     }

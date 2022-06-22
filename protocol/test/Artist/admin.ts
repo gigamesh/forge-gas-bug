@@ -1,5 +1,5 @@
 import { expect } from 'chai';
-import { setUpContract, EDITION_ID } from '../helpers';
+import { setUpContract, EDITION_ID } from '../testHelpers';
 import { ethers } from 'hardhat';
 
 const adminRole = ethers.utils.id('ADMIN');

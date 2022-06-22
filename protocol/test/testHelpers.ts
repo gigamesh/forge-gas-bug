@@ -4,9 +4,9 @@ import { parseEther } from 'ethers/lib/utils';
 import { ethers, upgrades, waffle } from 'hardhat';
 
 import { SplitMain__factory } from '../typechain';
+import { getRandomBN, MAX_UINT32 } from '../helpers';
 
 import type { SignerWithAddress } from '@nomiclabs/hardhat-ethers/signers';
-
 export type DeployArtistFn = typeof deployArtistProxy;
 
 const { getAuthSignature } = helpers;
@@ -14,14 +14,10 @@ export const { provider } = waffle;
 
 //========== Constants =========//
 
-export const MAX_UINT32 = 4294967295;
 export const EXAMPLE_ARTIST_NAME = 'Alpha & Omega';
 export const EXAMPLE_ARTIST_ID = 1;
 export const EXAMPLE_ARTIST_SYMBOL = 'AOMEGA';
 export const BASE_URI = `https://sound-staging.vercel.app/api/metadata/`;
-export const NULL_ADDRESS = '0x0000000000000000000000000000000000000000';
-export const EMPTY_SIGNATURE =
-  '0x00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000';
 export const INVALID_PRIVATE_KEY = '0xb73249a6bf495f81385ce91b84cc2eff129011fea429ba7f1827d73b06390208';
 export const NULL_TICKET_NUM = '0x0';
 export const CHAIN_ID = 1337;
@@ -99,27 +95,6 @@ export type CreateEditionFn = ({
   editionArgs?: EditionArgs;
   postUpgradeVersion?: number;
 }) => Promise<any>;
-
-export function currentSeconds() {
-  return Math.floor(Date.now() / 1000);
-}
-
-export function getRandomInt(min = 0, max = MAX_UINT32) {
-  min = Math.ceil(min);
-  max = Math.floor(max);
-  return Math.floor(Math.random() * (max - min + 1)) + min;
-}
-export function getRandomBN(max?: number) {
-  const rando = BigNumber.from(ethers.utils.randomBytes(4));
-  if (max) {
-    return rando.mod(max.toString());
-  }
-  return rando;
-}
-
-export function getRandomAddress() {
-  return ethers.Wallet.fromMnemonic(process.env.MNEMONIC, `m/44'/60'/0'/0/${getRandomInt(0, 10000)}`).address;
-}
 
 export async function deployArtistProxy({
   artistAccount,

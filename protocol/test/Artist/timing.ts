@@ -1,6 +1,7 @@
 import { expect } from 'chai';
 
-import { currentSeconds, EDITION_ID, setUpContract } from '../helpers';
+import { EDITION_ID, setUpContract } from '../testHelpers';
+import { currentSeconds } from '../../helpers';
 
 export function setStartTimeTests() {
   const newTime = currentSeconds() + 100;

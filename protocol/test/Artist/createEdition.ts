@@ -2,7 +2,8 @@ import chai, { expect } from 'chai';
 import { solidity } from 'ethereum-waffle';
 import { BigNumber } from 'ethers';
 
-import { currentSeconds, EDITION_ID, MAX_UINT32, NULL_ADDRESS, setUpContract, getRandomInt } from '../helpers';
+import { EDITION_ID, setUpContract } from '../testHelpers';
+import { currentSeconds, MAX_UINT32, NULL_ADDRESS, getRandomInt } from '../../helpers';
 
 chai.use(solidity);
 

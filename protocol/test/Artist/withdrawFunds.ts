@@ -1,7 +1,8 @@
 import { expect } from 'chai';
 import { BigNumber } from 'ethers';
 
-import { EDITION_ID, EMPTY_SIGNATURE, NULL_TICKET_NUM, provider, setUpContract } from '../helpers';
+import { EDITION_ID, NULL_TICKET_NUM, provider, setUpContract } from '../testHelpers';
+import { EMPTY_SIGNATURE } from '../../helpers';
 
 export async function withdrawFundsTests() {
   it('transfers edition funds to the fundingRecipient', async () => {

@@ -73,7 +73,7 @@ contract ArtistCreatorV3 is Initializable, UUPSUpgradeable, OwnableUpgradeable {
         // salted contract creation using create2
         BeaconProxy proxy = new BeaconProxy{salt: salt}(
             beaconAddress,
-            // 0x5f1e6f6d is the initialize function selector on ArtistV5 (hash of "function initialize(address, string, string, string)")
+            // 0x5f1e6f6d is the initialize function selector on ArtistV6 (hash of "function initialize(address, string, string, string)")
             abi.encodeWithSelector(0x5f1e6f6d, _msgSender(), _name, _symbol, _baseURI)
         );
 

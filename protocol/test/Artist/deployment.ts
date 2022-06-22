@@ -3,7 +3,8 @@ import { solidity } from 'ethereum-waffle';
 import { BigNumber } from 'ethers';
 import { ethers } from 'hardhat';
 
-import { EXAMPLE_ARTIST_NAME, EXAMPLE_ARTIST_SYMBOL, getRandomInt, setUpContract } from '../helpers';
+import { EXAMPLE_ARTIST_NAME, EXAMPLE_ARTIST_SYMBOL, setUpContract } from '../testHelpers';
+import { getRandomInt } from '../../helpers';
 
 chai.use(solidity);
 

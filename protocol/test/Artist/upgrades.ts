@@ -10,15 +10,15 @@ import {
   createArtist,
   CreateEditionFn,
   createEditions,
-  currentSeconds,
   EDITION_ID,
-  EMPTY_SIGNATURE,
   EXAMPLE_ARTIST_NAME,
   EXAMPLE_ARTIST_SYMBOL,
   getAccounts,
   getTokenId,
   setUpContract,
-} from '../helpers';
+} from '../testHelpers';
+
+import { currentSeconds, EMPTY_SIGNATURE } from '../../helpers';
 
 const { baseURIs } = constants;
 

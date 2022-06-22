@@ -2,7 +2,7 @@ import chai, { expect } from 'chai';
 import { solidity } from 'ethereum-waffle';
 import { ethers, upgrades } from 'hardhat';
 
-import { setUpContract, createArtist, EXAMPLE_ARTIST_NAME, EXAMPLE_ARTIST_SYMBOL, BASE_URI } from '../helpers';
+import { setUpContract, createArtist, EXAMPLE_ARTIST_NAME, EXAMPLE_ARTIST_SYMBOL, BASE_URI } from '../testHelpers';
 
 chai.use(solidity);
 

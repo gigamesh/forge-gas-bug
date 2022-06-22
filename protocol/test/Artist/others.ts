@@ -4,21 +4,9 @@ import { solidity } from 'ethereum-waffle';
 import { BigNumber } from 'ethers';
 import { ethers } from 'hardhat';
 
-import {
-  BASE_URI,
-  CHAIN_ID,
-  currentSeconds,
-  EDITION_ID,
-  EMPTY_SIGNATURE,
-  getRandomBN,
-  getRandomInt,
-  getTokenId,
-  MAX_UINT32,
-  NULL_ADDRESS,
-  NULL_TICKET_NUM,
-  provider,
-  setUpContract,
-} from '../helpers';
+import { BASE_URI, CHAIN_ID, EDITION_ID, getTokenId, NULL_TICKET_NUM, provider, setUpContract } from '../testHelpers';
+
+import { currentSeconds, EMPTY_SIGNATURE, getRandomBN, getRandomInt, MAX_UINT32, NULL_ADDRESS } from '../../helpers';
 
 chai.use(solidity);
 

@@ -3,7 +3,7 @@ import { expect } from 'chai';
 import { Contract } from 'ethers';
 import { ethers, upgrades, waffle } from 'hardhat';
 
-import { BASE_URI, createArtist, EXAMPLE_ARTIST_NAME, EXAMPLE_ARTIST_SYMBOL } from '../helpers';
+import { BASE_URI, createArtist, EXAMPLE_ARTIST_NAME, EXAMPLE_ARTIST_SYMBOL } from '../testHelpers';
 
 import type { SignerWithAddress } from '@nomiclabs/hardhat-ethers/signers';
 

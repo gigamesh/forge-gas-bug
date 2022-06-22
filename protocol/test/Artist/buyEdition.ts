@@ -6,18 +6,16 @@ import { ethers } from 'hardhat';
 import {
   BASE_URI,
   CHAIN_ID,
-  currentSeconds,
   deployArtistProxy,
   EDITION_ID,
-  EMPTY_SIGNATURE,
   getTokenId,
   INVALID_PRIVATE_KEY,
-  MAX_UINT32,
   NULL_TICKET_NUM,
   provider,
   setUpContract,
-  EXAMPLE_ARTIST_ID,
-} from '../helpers';
+} from '../testHelpers';
+
+import { MAX_UINT32, EMPTY_SIGNATURE, currentSeconds } from '../../helpers';
 
 const { getPresaleSignature } = commonHelpers;
 
