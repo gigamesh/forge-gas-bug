@@ -42,24 +42,13 @@ contract TestConfig is Test {
     address immutable ARTIST1_ADDRESS;
     address immutable ARTIST2_ADDRESS;
     address immutable FUNDING_RECIPIENT;
-    address[10] BUYERS = [
-        ((vm.addr(1))),
-        ((vm.addr(2))),
-        ((vm.addr(3))),
-        ((vm.addr(4))),
-        ((vm.addr(5))),
-        ((vm.addr(6))),
-        ((vm.addr(7))),
-        ((vm.addr(8))),
-        ((vm.addr(9))),
-        ((vm.addr(10)))
-    ];
+    address[] BUYERS;
 
     // global values
     uint256 constant PERCENTAGE_SCALE = 1e6;
 
     // default edition args
-    uint256 constant PRICE = 1 ether;
+    uint256 constant PRICE = 100000000000000000; // 0.1 ether
     uint32 constant QUANTITY = 10;
     uint32 constant ROYALTY_BPS = 1000;
     uint32 constant START_TIME = 0;
@@ -79,9 +68,10 @@ contract TestConfig is Test {
         FUNDING_RECIPIENT = ARTIST1_ADDRESS;
         SIGNER_ADDRESS = SOUND_ADMIN_ADDRESS;
 
-        // Give each buyer some ETH
-        for (uint8 i; i < BUYERS.length; i++) {
-            deal(BUYERS[i], 10000 ether);
+        // Create buyers & give each some ETH
+        for (uint256 i = 1; i < 2000; i++) {
+            BUYERS.push(vm.addr(i));
+            deal(BUYERS[i - 1], 100 ether);
         }
     }
 

@@ -22,6 +22,7 @@
     "seed:rinkeby": "DEPLOY_SEED_DATA=true pnpm deploy:rinkeby",
     "test:hh": "hardhat test",
     "test:f": "forge test -vvv",
+    "test:w": "forge test --watch -vvv",
     "test": "pnpm test:hh && pnpm test:f",
     "coverage": "hardhat coverage",
     "size": "hardhat size-contracts",
