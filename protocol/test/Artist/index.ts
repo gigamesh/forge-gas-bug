@@ -2,7 +2,6 @@ import '@nomiclabs/hardhat-ethers';
 
 import { buyEditionTests } from './buyEdition';
 import { createEditionTests } from './createEdition';
-import { deploymentTests } from './deployment';
 import { endToEndTests } from './endToEnd';
 import {
   checkTicketNumbersTests,
@@ -20,10 +19,6 @@ import {
 } from './others';
 
 describe('Artist proxy', () => {
-  describe('deployment', () => {
-    deploymentTests();
-  });
-
   describe('createEdition', () => {
     createEditionTests();
   });

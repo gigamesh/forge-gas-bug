@@ -48,6 +48,10 @@ contract TestConfig is Test {
     // global values
     uint256 constant PERCENTAGE_SCALE = 1e6;
 
+    // Artist contract creation vars
+    string constant ARTIST_NAME = 'Fake Artist';
+    string constant ARTIST_SYMBOL = 'FAKE';
+
     // default edition args
     uint256 constant PRICE = 100000000000000000; // 0.1 ether
     uint32 constant QUANTITY = 10;
@@ -127,9 +131,7 @@ contract TestConfig is Test {
 
         // Deploy artist proxy
         vm.prank(ARTIST1_ADDRESS);
-        artistContract = ArtistV6(
-            artistCreator.createArtist(signature, 'FakeArtist', 'ART', 'http://example.com/artist/')
-        );
+        artistContract = ArtistV6(artistCreator.createArtist(signature, ARTIST_NAME, ARTIST_SYMBOL, BASE_URI));
     }
 
     // Creates auth signature needed for createArtist function
@@ -161,7 +163,7 @@ contract TestConfig is Test {
             PERMISSIONED_QUANTITY,
             SOUND_ADMIN_ADDRESS,
             EDITION_ID,
-            BASE_URI
+            ''
         );
     }
 
