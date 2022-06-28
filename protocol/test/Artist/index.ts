@@ -19,7 +19,6 @@ import {
   setOwnerOverrideTests,
   setBaseURITests,
 } from './others';
-import { setEndTimeTests, setStartTimeTests } from './timing';
 import { withdrawFundsTests } from './withdrawFunds';
 
 describe('Artist proxy', () => {
@@ -37,14 +36,6 @@ describe('Artist proxy', () => {
 
   describe('withdrawFunds', () => {
     withdrawFundsTests();
-  });
-
-  describe('setStartTime', () => {
-    setStartTimeTests();
-  });
-
-  describe('setEndTime', () => {
-    setEndTimeTests();
   });
 
   describe('setSignerAddress', () => {
