@@ -16,6 +16,7 @@ contract TestConfig is Test {
     }
 
     ArtistCreatorV3 artistCreator;
+    ArtistV6 artistContract;
 
     // Keys for mnemonic: clog doll trouble plug drill deny bottom into age task hybrid cement
     uint256[] public privateKeys = [
@@ -120,6 +121,15 @@ contract TestConfig is Test {
         splitMain = new SplitMain();
 
         vm.stopPrank();
+
+        // Get signature for artist proxy deployment
+        bytes memory signature = getCreateArtistSignature(ARTIST1_ADDRESS);
+
+        // Deploy artist proxy
+        vm.prank(ARTIST1_ADDRESS);
+        artistContract = ArtistV6(
+            artistCreator.createArtist(signature, 'FakeArtist', 'ART', 'http://example.com/artist/')
+        );
     }
 
     // Creates auth signature needed for createArtist function
@@ -137,5 +147,50 @@ contract TestConfig is Test {
         (uint8 v, bytes32 r, bytes32 s) = vm.sign(ADMIN_PRIV_KEY, digest);
 
         return abi.encodePacked(r, s, v);
+    }
+
+    function createEdition(uint32 quantity) public {
+        vm.prank(ARTIST1_ADDRESS);
+        artistContract.createEdition(
+            payable(FUNDING_RECIPIENT),
+            PRICE,
+            quantity,
+            ROYALTY_BPS,
+            START_TIME,
+            END_TIME,
+            PERMISSIONED_QUANTITY,
+            SOUND_ADMIN_ADDRESS,
+            EDITION_ID,
+            BASE_URI
+        );
+    }
+
+    // Accepts number of unique buyers, and an array of tokens per buyer
+    // Loops over unique buyers, and each buys the next number of tokens in tokensPerBuyer in a round robin
+    function createEditionAndBuyTokens(address[] memory uniqueBuyers, uint32[] memory tokensPerBuyer)
+        public
+        returns (uint32 tokenQuantity)
+    {
+        // Calculate total number of tokens to be purchased
+        tokenQuantity = 0;
+        for (uint256 i = 0; i < uniqueBuyers.length; i++) {
+            tokenQuantity += tokensPerBuyer[i % tokensPerBuyer.length];
+        }
+
+        // Create edition
+        createEdition(tokenQuantity);
+
+        // Loop over buyers
+        // For each buyer, purchase the next quantity in tokensPerBuyer
+        for (uint256 i = 0; i < uniqueBuyers.length; i++) {
+            address buyer = uniqueBuyers[i];
+            uint256 tokensToBuy = tokensPerBuyer[i % tokensPerBuyer.length];
+            for (uint256 j = 0; j < tokensToBuy; j++) {
+                vm.prank(buyer);
+                artistContract.buyEdition{value: PRICE}(EDITION_ID, EMPTY_SIGNATURE, 0);
+            }
+        }
+
+        return tokenQuantity;
     }
 }
