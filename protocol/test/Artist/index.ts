@@ -1,6 +1,5 @@
 import '@nomiclabs/hardhat-ethers';
 
-import { adminTests } from './admin';
 import { buyEditionTests } from './buyEdition';
 import { createEditionTests } from './createEdition';
 import { deploymentTests } from './deployment';
@@ -84,10 +83,6 @@ describe('Artist proxy', () => {
 
   describe('setOwnerOverride', () => {
     setOwnerOverrideTests();
-  });
-
-  describe('admin functionality', () => {
-    adminTests();
   });
 
   describe('end-to-end tests', () => {
