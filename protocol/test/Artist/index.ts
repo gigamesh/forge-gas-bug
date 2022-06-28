@@ -18,7 +18,6 @@ import {
   setOwnerOverrideTests,
   setBaseURITests,
 } from './others';
-import { withdrawFundsTests } from './withdrawFunds';
 
 describe('Artist proxy', () => {
   describe('deployment', () => {
@@ -31,10 +30,6 @@ describe('Artist proxy', () => {
 
   describe('buyEdition', () => {
     buyEditionTests();
-  });
-
-  describe('withdrawFunds', () => {
-    withdrawFundsTests();
   });
 
   describe('setSignerAddress', () => {
