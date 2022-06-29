@@ -5,15 +5,10 @@ import { createEditionTests } from './createEdition';
 import { endToEndTests } from './endToEnd';
 import {
   checkTicketNumbersTests,
-  contractURITests,
   editionCountTests,
-  getApprovedTests,
   ownersOfTokenIdsTests,
-  royaltyInfoTests,
   setPermissionedQuantityTests,
   setSignerAddressTests,
-  totalSupplyTests,
-  transferFromTests,
   setOwnerOverrideTests,
   setBaseURITests,
 } from './others';
@@ -37,26 +32,6 @@ describe('Artist proxy', () => {
 
   describe('setBaseURI', () => {
     setBaseURITests();
-  });
-
-  describe('getApproved', () => {
-    getApprovedTests();
-  });
-
-  describe('transferFrom', () => {
-    transferFromTests();
-  });
-
-  describe('totalSupply', () => {
-    totalSupplyTests();
-  });
-
-  describe('contractURI', () => {
-    contractURITests();
-  });
-
-  describe('royaltyInfo', () => {
-    royaltyInfoTests();
   });
 
   describe('editionCount', () => {
