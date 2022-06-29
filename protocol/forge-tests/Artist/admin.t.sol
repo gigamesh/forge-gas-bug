@@ -57,14 +57,14 @@ contract Artist_admin is TestConfig {
     // Prevents non-owner from revoking a role
     function test_revokeRoleOnlyOwner() public {
         for (uint256 i = 1; i < 100; i++) {
-            address attacker = vm.addr(i);
+            address someAddress = vm.addr(i);
 
             vm.prank(ARTIST1_ADDRESS);
-            artistContract.grantRole(ADMIN_ROLE, ARTIST2_ADDRESS);
+            artistContract.grantRole(ADMIN_ROLE, someAddress);
 
-            vm.prank(attacker);
+            vm.prank(someAddress);
             vm.expectRevert(bytes('Ownable: caller is not the owner'));
-            artistContract.revokeRole(ADMIN_ROLE, attacker);
+            artistContract.revokeRole(ADMIN_ROLE, someAddress);
         }
     }
 

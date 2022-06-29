@@ -70,8 +70,8 @@ contract ArtistCreatorTest is TestConfig {
 
     // Deploys artist contracts with expected event data
     function test_createArtist() public {
-        for (uint256 i = 0; i < privateKeys.length; i++) {
-            address fakeArtistAddr = vm.addr(privateKeys[i]);
+        for (uint256 i = 1; i < 20; i++) {
+            address fakeArtistAddr = vm.addr(i);
 
             bytes memory signature = getCreateArtistSignature(fakeArtistAddr);
 
@@ -105,8 +105,8 @@ contract ArtistCreatorTest is TestConfig {
 
     // Prevents deployment if admin signature is invalid.
     function testFail_createArtist() public {
-        for (uint256 i = 0; i < privateKeys.length; i++) {
-            address fakeArtistAddr = vm.addr(privateKeys[i]);
+        for (uint256 i = 1; i < 20; i++) {
+            address fakeArtistAddr = vm.addr(i);
 
             // Build auth signature
             // (equivalent to ethers.js wallet._signTypedData())
