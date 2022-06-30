@@ -1,6 +1,5 @@
 import '@nomiclabs/hardhat-ethers';
 
-import { buyEditionTests } from './buyEdition';
 import { createEditionTests } from './createEdition';
 import { endToEndTests } from './endToEnd';
 import {
@@ -16,10 +15,6 @@ import {
 describe('Artist proxy', () => {
   describe('createEdition', () => {
     createEditionTests();
-  });
-
-  describe('buyEdition', () => {
-    buyEditionTests();
   });
 
   describe('setSignerAddress', () => {

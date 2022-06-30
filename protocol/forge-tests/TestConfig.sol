@@ -18,6 +18,7 @@ contract TestConfig is Test {
     ArtistCreatorV3 artistCreator;
     ArtistV6 artistContract;
 
+    uint256 constant TICKET_NUM_ZERO = 0;
     uint256 constant NULL_PRIV_KEY = 0x0000000000000000000000000000000000000000000000000000000000000000;
     bytes constant EMPTY_SIGNATURE = bytes('');
     uint256 immutable ADMIN_PRIV_KEY;
@@ -132,31 +133,35 @@ contract TestConfig is Test {
         return abi.encodePacked(r, s, v);
     }
 
+    // Creates signature needed for permissioned purchase
     function getPresaleSignature(
+        ArtistV6 artistContract_,
+        uint256 signerPrivateKey,
         address buyer,
         uint256 editionId,
         uint256 ticketNum
-    ) public returns (bytes memory signature) {
+    )
+        public
+        returns (bytes memory signature)
+    {
         // Build auth signature
         // (equivalent to ethers.js wallet._signTypedData())
         bytes32 digest = keccak256(
             abi.encodePacked(
                 '\x19\x01',
-                artistContract.DOMAIN_SEPARATOR(),
-                keccak256(
-                    abi.encode(
-                        artistContract.PERMISSIONED_SALE_TYPEHASH(),
-                        address(artistContract),
-                        buyer,
-                        editionId,
-                        ticketNum
-                    )
-                )
+                artistCreator.DOMAIN_SEPARATOR(),
+                keccak256(abi.encode(
+                    artistContract_.PERMISSIONED_SALE_TYPEHASH(), 
+                    address(artistContract_),
+                    buyer,
+                    editionId,
+                    ticketNum
+                ))
             )
         );
-        (uint8 v, bytes32 r, bytes32 s) = vm.sign(ADMIN_PRIV_KEY, digest);
-
-        return abi.encodePacked(r, s, v);
+        
+        (uint8 v, bytes32 r, bytes32 s) = vm.sign(signerPrivateKey, digest);
+        return abi.encodePacked(r, s, v);    
     }
 
     function createEdition(uint32 quantity) public {
@@ -202,5 +207,9 @@ contract TestConfig is Test {
         }
 
         return tokenQuantity;
+    }
+
+    function getTokenId(uint256 editionId, uint256 tokenCount) public pure returns (uint256) {
+        return (editionId << 128) | tokenCount;
     }
 }
