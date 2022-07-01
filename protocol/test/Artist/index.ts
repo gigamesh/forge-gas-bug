@@ -1,6 +1,5 @@
 import '@nomiclabs/hardhat-ethers';
 
-import { endToEndTests } from './endToEnd';
 import {
   checkTicketNumbersTests,
   editionCountTests,
@@ -38,9 +37,5 @@ describe('Artist proxy', () => {
 
   describe('setOwnerOverride', () => {
     setOwnerOverrideTests();
-  });
-
-  describe('end-to-end tests', () => {
-    endToEndTests();
   });
 });
