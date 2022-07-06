@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 pragma solidity ^0.8.14;
 
-import "@openzeppelin/contracts/utils/Strings.sol";
-import {IERC2981Upgradeable} from "@openzeppelin/contracts-upgradeable/interfaces/IERC2981Upgradeable.sol";
-import "../TestConfig.sol";
+import '@openzeppelin/contracts/utils/Strings.sol';
+import {IERC2981Upgradeable} from '@openzeppelin/contracts-upgradeable/interfaces/IERC2981Upgradeable.sol';
+import '../TestConfig.sol';
 
 contract Artist_buyEdition is TestConfig {
     event EditionPurchased(
@@ -16,7 +16,7 @@ contract Artist_buyEdition is TestConfig {
 
     // Test reverts with "Edition does not exist" when expected.
     function test_buyEditionRevertsForNonExistingEdition() public {
-        vm.expectRevert(bytes("Edition does not exist"));
+        vm.expectRevert(bytes('Edition does not exist'));
         vm.prank(BUYERS[0]);
         artistContract.buyEdition{value: PRICE}(69420, EMPTY_SIGNATURE, TICKET_NUM_ZERO);
     }
@@ -35,7 +35,7 @@ contract Artist_buyEdition is TestConfig {
             PERMISSIONED_QUANTITY,
             SOUND_ADMIN_ADDRESS,
             EDITION_ID,
-            ""
+            ''
         );
 
         vm.prank(BUYERS[0]);
@@ -45,7 +45,7 @@ contract Artist_buyEdition is TestConfig {
         }
 
         // Note: this error ends with a period `.`, which is inconsistent.
-        vm.expectRevert(bytes("This edition is already sold out."));
+        vm.expectRevert(bytes('This edition is already sold out.'));
         artistContract.buyEdition{value: PRICE}(EDITION_ID, EMPTY_SIGNATURE, TICKET_NUM_ZERO);
     }
 
@@ -64,12 +64,12 @@ contract Artist_buyEdition is TestConfig {
             permissionedQuantity,
             SOUND_ADMIN_ADDRESS,
             EDITION_ID,
-            ""
+            ''
         );
 
         vm.prank(BUYERS[0]);
 
-        vm.expectRevert(bytes("No permissioned tokens available & open auction not started"));
+        vm.expectRevert(bytes('No permissioned tokens available & open auction not started'));
         artistContract.buyEdition{value: PRICE}(EDITION_ID, EMPTY_SIGNATURE, TICKET_NUM_ZERO);
     }
 
@@ -90,15 +90,21 @@ contract Artist_buyEdition is TestConfig {
             permissionedQuantity,
             SOUND_ADMIN_ADDRESS,
             EDITION_ID,
-            ""
+            ''
         );
 
-        bytes memory signature = getPresaleSignature(artistContract, ADMIN_PRIV_KEY, BUYERS[0], EDITION_ID, TICKET_NUM_ZERO);
+        bytes memory signature = getPresaleSignature(
+            artistContract,
+            ADMIN_PRIV_KEY,
+            BUYERS[0],
+            EDITION_ID,
+            TICKET_NUM_ZERO
+        );
 
         vm.prank(BUYERS[0]);
         artistContract.buyEdition{value: PRICE}(EDITION_ID, signature, TICKET_NUM_ZERO);
 
-        vm.expectRevert(bytes("No permissioned tokens available & open auction not started"));
+        vm.expectRevert(bytes('No permissioned tokens available & open auction not started'));
         artistContract.buyEdition{value: PRICE}(EDITION_ID, signature, TICKET_NUM_ZERO);
     }
 
@@ -119,14 +125,20 @@ contract Artist_buyEdition is TestConfig {
             permissionedQuantity,
             SOUND_ADMIN_ADDRESS,
             EDITION_ID,
-            ""
+            ''
         );
 
-        bytes memory signature = getPresaleSignature(artistContract, ADMIN_PRIV_KEY, BUYERS[0], EDITION_ID, TICKET_NUM_ZERO);
+        bytes memory signature = getPresaleSignature(
+            artistContract,
+            ADMIN_PRIV_KEY,
+            BUYERS[0],
+            EDITION_ID,
+            TICKET_NUM_ZERO
+        );
 
         vm.prank(BUYERS[0]);
 
-        vm.expectRevert(bytes("No permissioned tokens available & open auction not started"));
+        vm.expectRevert(bytes('No permissioned tokens available & open auction not started'));
         artistContract.buyEdition{value: PRICE}(EDITION_ID, signature, TICKET_NUM_ZERO);
     }
 
@@ -146,15 +158,21 @@ contract Artist_buyEdition is TestConfig {
             permissionedQuantity,
             SOUND_ADMIN_ADDRESS,
             EDITION_ID,
-            ""
+            ''
         );
 
         uint256 ticketNumber = uint256(permissionedQuantity) + 1;
-        bytes memory signature = getPresaleSignature(artistContract, ADMIN_PRIV_KEY, BUYERS[0], EDITION_ID, ticketNumber);
+        bytes memory signature = getPresaleSignature(
+            artistContract,
+            ADMIN_PRIV_KEY,
+            BUYERS[0],
+            EDITION_ID,
+            ticketNumber
+        );
 
         vm.prank(BUYERS[0]);
 
-        vm.expectRevert(bytes("Ticket number exceeds max"));
+        vm.expectRevert(bytes('Ticket number exceeds max'));
         artistContract.buyEdition{value: PRICE}(EDITION_ID, signature, ticketNumber);
     }
 
@@ -174,14 +192,14 @@ contract Artist_buyEdition is TestConfig {
             PERMISSIONED_QUANTITY,
             SOUND_ADMIN_ADDRESS,
             EDITION_ID,
-            ""
+            ''
         );
 
         vm.prank(BUYERS[0]);
         artistContract.buyEdition{value: PRICE}(EDITION_ID, EMPTY_SIGNATURE, TICKET_NUM_ZERO);
 
         vm.warp(endTime);
-        vm.expectRevert(bytes("Auction has ended"));
+        vm.expectRevert(bytes('Auction has ended'));
         artistContract.buyEdition{value: PRICE}(EDITION_ID, EMPTY_SIGNATURE, TICKET_NUM_ZERO);
     }
 
@@ -201,12 +219,12 @@ contract Artist_buyEdition is TestConfig {
             permissionedQuantity,
             SOUND_ADMIN_ADDRESS,
             EDITION_ID,
-            ""
+            ''
         );
 
         vm.prank(BUYERS[0]);
 
-        vm.expectRevert(bytes("ECDSA: invalid signature length"));
+        vm.expectRevert(bytes('ECDSA: invalid signature length'));
         artistContract.buyEdition{value: PRICE}(EDITION_ID, EMPTY_SIGNATURE, TICKET_NUM_ZERO);
     }
 
@@ -227,7 +245,7 @@ contract Artist_buyEdition is TestConfig {
             permissionedQuantity,
             SOUND_ADMIN_ADDRESS,
             EDITION_ID,
-            ""
+            ''
         );
 
         // Get the signature with a wrong artistContract address.
@@ -236,11 +254,17 @@ contract Artist_buyEdition is TestConfig {
         ArtistV6 wrongArtistContract = ArtistV6(
             artistCreator.createArtist(createArtistSignature, ARTIST_NAME, ARTIST_SYMBOL, BASE_URI)
         );
-        bytes memory signature = getPresaleSignature(wrongArtistContract, ADMIN_PRIV_KEY, BUYERS[0], EDITION_ID, TICKET_NUM_ZERO);
+        bytes memory signature = getPresaleSignature(
+            wrongArtistContract,
+            ADMIN_PRIV_KEY,
+            BUYERS[0],
+            EDITION_ID,
+            TICKET_NUM_ZERO
+        );
 
         vm.prank(BUYERS[0]);
 
-        vm.expectRevert(bytes("Invalid signer"));
+        vm.expectRevert(bytes('Invalid signer'));
         artistContract.buyEdition{value: PRICE}(EDITION_ID, signature, TICKET_NUM_ZERO);
     }
 
@@ -261,15 +285,21 @@ contract Artist_buyEdition is TestConfig {
             permissionedQuantity,
             SOUND_ADMIN_ADDRESS,
             EDITION_ID,
-            ""
+            ''
         );
 
         uint256 wrongPrivateKey = 0x12345;
-        bytes memory signature = getPresaleSignature(artistContract, wrongPrivateKey, BUYERS[0], EDITION_ID, TICKET_NUM_ZERO);
+        bytes memory signature = getPresaleSignature(
+            artistContract,
+            wrongPrivateKey,
+            BUYERS[0],
+            EDITION_ID,
+            TICKET_NUM_ZERO
+        );
 
         vm.prank(BUYERS[0]);
 
-        vm.expectRevert(bytes("Invalid signer"));
+        vm.expectRevert(bytes('Invalid signer'));
         artistContract.buyEdition{value: PRICE}(EDITION_ID, signature, TICKET_NUM_ZERO);
     }
 
@@ -290,14 +320,20 @@ contract Artist_buyEdition is TestConfig {
             permissionedQuantity,
             SOUND_ADMIN_ADDRESS,
             EDITION_ID,
-            ""
+            ''
         );
 
-        bytes memory signature = getPresaleSignature(artistContract, ADMIN_PRIV_KEY, BUYERS[0], EDITION_ID + 1, TICKET_NUM_ZERO);
+        bytes memory signature = getPresaleSignature(
+            artistContract,
+            ADMIN_PRIV_KEY,
+            BUYERS[0],
+            EDITION_ID + 1,
+            TICKET_NUM_ZERO
+        );
 
         vm.prank(BUYERS[0]);
 
-        vm.expectRevert(bytes("Invalid signer"));
+        vm.expectRevert(bytes('Invalid signer'));
         artistContract.buyEdition{value: PRICE}(EDITION_ID, signature, TICKET_NUM_ZERO);
     }
 
@@ -318,20 +354,26 @@ contract Artist_buyEdition is TestConfig {
             permissionedQuantity,
             SOUND_ADMIN_ADDRESS,
             EDITION_ID,
-            ""
+            ''
         );
 
-        bytes memory signature = getPresaleSignature(artistContract, ADMIN_PRIV_KEY, BUYERS[0], EDITION_ID, TICKET_NUM_ZERO);
+        bytes memory signature = getPresaleSignature(
+            artistContract,
+            ADMIN_PRIV_KEY,
+            BUYERS[0],
+            EDITION_ID,
+            TICKET_NUM_ZERO
+        );
 
         vm.prank(BUYERS[0]);
 
         artistContract.buyEdition{value: PRICE}(EDITION_ID, signature, TICKET_NUM_ZERO);
 
-        vm.expectRevert(bytes("Invalid ticket number or NFT already claimed"));
+        vm.expectRevert(bytes('Invalid ticket number or NFT already claimed'));
         artistContract.buyEdition{value: PRICE}(EDITION_ID, signature, TICKET_NUM_ZERO);
     }
 
-    // Test enables open editions: signed purchases can exceed quantity prior to the public sale start time.
+    // Test enables range editions: signed purchases can exceed quantity prior to the public sale start time.
     function test_buyEditionSignedPurchasesCanExceedQuantity() public {
         uint32 startTime = uint32(block.timestamp) + 1;
         uint32 quantity = 2;
@@ -348,13 +390,19 @@ contract Artist_buyEdition is TestConfig {
             permissionedQuantity,
             SOUND_ADMIN_ADDRESS,
             EDITION_ID,
-            ""
+            ''
         );
         // Test some purchases in order
         for (uint256 i; i < quantity * 2; ++i) {
             uint256 ticketNumber = i;
             uint256 buyerIndex = i % BUYERS.length;
-            bytes memory signature = getPresaleSignature(artistContract, ADMIN_PRIV_KEY, BUYERS[buyerIndex], EDITION_ID, ticketNumber);
+            bytes memory signature = getPresaleSignature(
+                artistContract,
+                ADMIN_PRIV_KEY,
+                BUYERS[buyerIndex],
+                EDITION_ID,
+                ticketNumber
+            );
             vm.prank(BUYERS[buyerIndex]);
             artistContract.buyEdition{value: PRICE}(EDITION_ID, signature, ticketNumber);
         }
@@ -362,7 +410,13 @@ contract Artist_buyEdition is TestConfig {
         for (uint256 i; i < quantity * 2; ++i) {
             uint256 ticketNumber = permissionedQuantity - i;
             uint256 buyerIndex = i % BUYERS.length;
-            bytes memory signature = getPresaleSignature(artistContract, ADMIN_PRIV_KEY, BUYERS[buyerIndex], EDITION_ID, ticketNumber);
+            bytes memory signature = getPresaleSignature(
+                artistContract,
+                ADMIN_PRIV_KEY,
+                BUYERS[buyerIndex],
+                EDITION_ID,
+                ticketNumber
+            );
             vm.prank(BUYERS[buyerIndex]);
             artistContract.buyEdition{value: PRICE}(EDITION_ID, signature, ticketNumber);
         }
@@ -386,7 +440,7 @@ contract Artist_buyEdition is TestConfig {
             permissionedQuantity,
             SOUND_ADMIN_ADDRESS,
             EDITION_ID,
-            ""
+            ''
         );
 
         vm.prank(BUYERS[0]);
@@ -411,10 +465,16 @@ contract Artist_buyEdition is TestConfig {
             permissionedQuantity,
             SOUND_ADMIN_ADDRESS,
             EDITION_ID,
-            ""
+            ''
         );
 
-        bytes memory signature = getPresaleSignature(artistContract, ADMIN_PRIV_KEY, BUYERS[0], EDITION_ID, TICKET_NUM_ZERO);
+        bytes memory signature = getPresaleSignature(
+            artistContract,
+            ADMIN_PRIV_KEY,
+            BUYERS[0],
+            EDITION_ID,
+            TICKET_NUM_ZERO
+        );
 
         vm.prank(BUYERS[0]);
 
@@ -441,7 +501,7 @@ contract Artist_buyEdition is TestConfig {
             PERMISSIONED_QUANTITY,
             SOUND_ADMIN_ADDRESS,
             EDITION_ID,
-            ""
+            ''
         );
 
         for (uint256 i; i < quantity; ++i) {
@@ -467,7 +527,7 @@ contract Artist_buyEdition is TestConfig {
             PERMISSIONED_QUANTITY,
             SOUND_ADMIN_ADDRESS,
             EDITION_ID,
-            ""
+            ''
         );
 
         for (uint256 i; i < quantity; ++i) {
@@ -494,7 +554,7 @@ contract Artist_buyEdition is TestConfig {
             PERMISSIONED_QUANTITY,
             SOUND_ADMIN_ADDRESS,
             EDITION_ID,
-            ""
+            ''
         );
 
         uint256 expectedBalance = 0;
@@ -523,7 +583,7 @@ contract Artist_buyEdition is TestConfig {
             PERMISSIONED_QUANTITY,
             SOUND_ADMIN_ADDRESS,
             EDITION_ID,
-            ""
+            ''
         );
 
         uint256 expectedBalance = fundingRecipient.balance;
@@ -558,7 +618,7 @@ contract Artist_buyEdition is TestConfig {
             uint256 tokenId = getTokenId(EDITION_ID, i + 1);
             artistContract.buyEdition{value: PRICE}(EDITION_ID, EMPTY_SIGNATURE, TICKET_NUM_ZERO);
             assertEq(
-                string.concat(BASE_URI, Strings.toString(tokenId), "/metadata.json"),
+                string.concat(BASE_URI, Strings.toString(tokenId), '/metadata.json'),
                 artistContract.tokenURI(tokenId)
             );
         }
@@ -581,13 +641,19 @@ contract Artist_buyEdition is TestConfig {
             permissionedQuantity,
             SOUND_ADMIN_ADDRESS,
             EDITION_ID,
-            ""
+            ''
         );
 
         for (uint256 i; i < quantity; ++i) {
             uint256 ticketNumber = i + 1;
             uint256 buyerIndex = i % BUYERS.length;
-            bytes memory signature = getPresaleSignature(artistContract, ADMIN_PRIV_KEY, BUYERS[buyerIndex], EDITION_ID, ticketNumber);
+            bytes memory signature = getPresaleSignature(
+                artistContract,
+                ADMIN_PRIV_KEY,
+                BUYERS[buyerIndex],
+                EDITION_ID,
+                ticketNumber
+            );
             vm.prank(BUYERS[buyerIndex]);
             artistContract.buyEdition{value: PRICE}(EDITION_ID, signature, ticketNumber);
         }
@@ -609,10 +675,16 @@ contract Artist_buyEdition is TestConfig {
             permissionedQuantity,
             SOUND_ADMIN_ADDRESS,
             EDITION_ID,
-            ""
+            ''
         );
 
-        bytes memory signature = getPresaleSignature(artistContract, ADMIN_PRIV_KEY, BUYERS[0], EDITION_ID, TICKET_NUM_ZERO);
+        bytes memory signature = getPresaleSignature(
+            artistContract,
+            ADMIN_PRIV_KEY,
+            BUYERS[0],
+            EDITION_ID,
+            TICKET_NUM_ZERO
+        );
 
         vm.prank(BUYERS[0]);
 
@@ -637,10 +709,16 @@ contract Artist_buyEdition is TestConfig {
             permissionedQuantity,
             SOUND_ADMIN_ADDRESS,
             EDITION_ID,
-            ""
+            ''
         );
 
-        bytes memory signature = getPresaleSignature(artistContract, ADMIN_PRIV_KEY, BUYERS[0], EDITION_ID, TICKET_NUM_ZERO);
+        bytes memory signature = getPresaleSignature(
+            artistContract,
+            ADMIN_PRIV_KEY,
+            BUYERS[0],
+            EDITION_ID,
+            TICKET_NUM_ZERO
+        );
 
         vm.prank(BUYERS[0]);
 

@@ -52,17 +52,12 @@ contract Artist_endToEnd is TestConfig {
         );
 
         uint256 artistContractInitBalance = address(artistContract).balance;
+        bytes memory signature;
 
         for (uint256 i = 1; i <= permissionedQuantity; i++) {
             uint256 revenue = PRICE * i;
             uint256 ticketNumber = i;
-            bytes memory signature = getPresaleSignature(
-                artistContract,
-                ADMIN_PRIV_KEY,
-                BUYERS[i],
-                EDITION_ID,
-                ticketNumber
-            );
+            signature = getPresaleSignature(artistContract, ADMIN_PRIV_KEY, BUYERS[i], EDITION_ID, ticketNumber);
 
             vm.prank(BUYERS[i]);
             artistContract.buyEdition{value: PRICE}(EDITION_ID, signature, ticketNumber);
@@ -75,13 +70,7 @@ contract Artist_endToEnd is TestConfig {
 
         address finalBuyer = BUYERS[permissionedQuantity + 1];
         uint256 finalTicketNum = permissionedQuantity + 1;
-        bytes memory signature = getPresaleSignature(
-            artistContract,
-            ADMIN_PRIV_KEY,
-            finalBuyer,
-            EDITION_ID,
-            finalTicketNum
-        );
+        signature = getPresaleSignature(artistContract, ADMIN_PRIV_KEY, finalBuyer, EDITION_ID, finalTicketNum);
 
         vm.prank(finalBuyer);
         vm.expectRevert(bytes('This edition is already sold out.'));
@@ -110,17 +99,12 @@ contract Artist_endToEnd is TestConfig {
         );
 
         uint256 artistContractInitBalance = address(artistContract).balance;
+        bytes memory signature;
 
         for (uint256 i = 1; i <= permissionedQuantity - 1; i++) {
             uint256 revenue = PRICE * i;
             uint256 ticketNumber = i;
-            bytes memory signature = getPresaleSignature(
-                artistContract,
-                ADMIN_PRIV_KEY,
-                BUYERS[i],
-                EDITION_ID,
-                ticketNumber
-            );
+            signature = getPresaleSignature(artistContract, ADMIN_PRIV_KEY, BUYERS[i], EDITION_ID, ticketNumber);
 
             vm.prank(BUYERS[i]);
             artistContract.buyEdition{value: PRICE}(EDITION_ID, signature, ticketNumber);
@@ -133,13 +117,7 @@ contract Artist_endToEnd is TestConfig {
 
         address finalBuyer = BUYERS[permissionedQuantity + 1];
         uint256 finalTicketNum = permissionedQuantity + 1;
-        bytes memory signature = getPresaleSignature(
-            artistContract,
-            ADMIN_PRIV_KEY,
-            finalBuyer,
-            EDITION_ID,
-            finalTicketNum
-        );
+        signature = getPresaleSignature(artistContract, ADMIN_PRIV_KEY, finalBuyer, EDITION_ID, finalTicketNum);
 
         (, , uint32 numSold, , , , , , , ) = artistContract.editions(EDITION_ID);
         assertEq(numSold, quantity - 1);

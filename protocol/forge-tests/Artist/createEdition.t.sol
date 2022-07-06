@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 pragma solidity ^0.8.14;
 
-import "@openzeppelin/contracts/utils/Strings.sol";
-import {IERC2981Upgradeable} from "@openzeppelin/contracts-upgradeable/interfaces/IERC2981Upgradeable.sol";
-import "../TestConfig.sol";
+import '@openzeppelin/contracts/utils/Strings.sol';
+import {IERC2981Upgradeable} from '@openzeppelin/contracts-upgradeable/interfaces/IERC2981Upgradeable.sol';
+import '../TestConfig.sol';
 
 contract Artist_createEdition is TestConfig {
     event EditionCreated(
@@ -25,20 +25,20 @@ contract Artist_createEdition is TestConfig {
         uint8 editionCount,
         address payable fundingRecipient,
         uint256 price,
-        uint32 quantity, 
+        uint32 quantity,
         uint32 royaltyBPS,
         uint32 permissionedQuantity,
         uint32 startTime,
-        uint32 endTime, 
+        uint32 endTime,
         address signerAddress
     ) public {
         vm.assume(editionCount < 3); // Restrict to a small number for faster testing.
         vm.assume(quantity > 0);
         vm.assume(endTime > startTime);
         if (permissionedQuantity > 0) {
-            vm.assume(signerAddress != address(0));    
+            vm.assume(signerAddress != address(0));
         }
-        
+
         for (uint256 i; i < editionCount; ++i) {
             uint256 editionId = i + 1;
             vm.prank(ARTIST1_ADDRESS);
@@ -64,7 +64,7 @@ contract Artist_createEdition is TestConfig {
                 permissionedQuantity,
                 signerAddress,
                 editionId,
-                ""
+                ''
             );
         }
     }
@@ -74,21 +74,23 @@ contract Artist_createEdition is TestConfig {
         uint8 editionCount,
         address payable fundingRecipient,
         uint256 price,
-        uint32 quantity, 
+        uint32 quantity,
         uint32 royaltyBPS,
         uint32 permissionedQuantity,
         uint32 startTime,
-        uint32 endTime, 
+        uint32 endTime,
         address signerAddress,
         string memory baseURI
     ) public {
         vm.assume(editionCount < 3); // Restrict to a small number for faster testing.
         vm.assume(quantity > 0);
         vm.assume(endTime > startTime);
+        vm.assume(address(fundingRecipient) != address(0));
+
         if (permissionedQuantity > 0) {
-            vm.assume(signerAddress != address(0));    
+            vm.assume(signerAddress != address(0));
         }
-        
+
         for (uint256 i; i < editionCount; ++i) {
             uint256 editionId = i + 1;
             vm.prank(ARTIST1_ADDRESS);
@@ -133,7 +135,7 @@ contract Artist_createEdition is TestConfig {
 
     // Test reverts if called by an unauthorized address.
     function test_createEditionRevertsForUnauthorizedCaller() public {
-        vm.expectRevert(bytes("unauthorized"));
+        vm.expectRevert(bytes('unauthorized'));
         artistContract.createEdition(
             payable(FUNDING_RECIPIENT),
             PRICE,
@@ -150,7 +152,7 @@ contract Artist_createEdition is TestConfig {
 
     // Test reverts if `quantity` is 0.
     function test_createEditionRevertsForZeroQuantity() public {
-        vm.expectRevert(bytes("Must set quantity"));
+        vm.expectRevert(bytes('Must set quantity'));
         vm.prank(ARTIST1_ADDRESS);
         artistContract.createEdition(
             payable(FUNDING_RECIPIENT),
@@ -168,7 +170,7 @@ contract Artist_createEdition is TestConfig {
 
     // Test reverts if no `fundingRecipient` is given.
     function test_createEditionRevertsForZeroAddressFundingReceipient() public {
-        vm.expectRevert(bytes("Must set fundingRecipient"));
+        vm.expectRevert(bytes('Must set fundingRecipient'));
         vm.prank(ARTIST1_ADDRESS);
         artistContract.createEdition(
             payable(address(0)),
@@ -185,12 +187,9 @@ contract Artist_createEdition is TestConfig {
     }
 
     // Test reverts if end time exceeds start time.
-    function test_createEditionRevertsForEndTimeExceedsStartTime(
-        uint32 startTime,
-        uint32 endTime
-    ) public {
+    function test_createEditionRevertsForEndTimeExceedsStartTime(uint32 startTime, uint32 endTime) public {
         vm.assume(!(endTime > startTime));
-        vm.expectRevert(bytes("End time must be greater than start time"));
+        vm.expectRevert(bytes('End time must be greater than start time'));
         vm.prank(ARTIST1_ADDRESS);
         artistContract.createEdition(
             payable(FUNDING_RECIPIENT),
@@ -213,7 +212,7 @@ contract Artist_createEdition is TestConfig {
     ) public {
         vm.assume(quantity > 0);
         vm.assume(permissionedQuantity > 0);
-        vm.expectRevert(bytes("Signer address cannot be 0"));
+        vm.expectRevert(bytes('Signer address cannot be 0'));
         vm.prank(ARTIST1_ADDRESS);
         artistContract.createEdition(
             payable(FUNDING_RECIPIENT),
@@ -232,7 +231,7 @@ contract Artist_createEdition is TestConfig {
     // Test reverts if `editionId` is incorrect.
     function test_createEditionRevertsForIncorrectEditionId(uint32 editionId) public {
         vm.assume(editionId != EDITION_ID);
-        vm.expectRevert(bytes("Wrong edition ID"));
+        vm.expectRevert(bytes('Wrong edition ID'));
         vm.prank(ARTIST1_ADDRESS);
         artistContract.createEdition(
             payable(FUNDING_RECIPIENT),
