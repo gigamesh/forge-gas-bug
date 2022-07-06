@@ -1,11 +1,11 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 pragma solidity 0.8.14;
 
-import '../ArtistV5.sol';
+import '../ArtistV6.sol';
 
-contract MOCK_ArtistV5 is ArtistV5 {
+contract MOCK_ArtistV6 is ArtistV6 {
     // Override that returns our 1st test address
     function soundRecoveryAddress() public pure override returns (address) {
-        return 0xB0A36b3CeDf210f37a5E7BC28d4b8E91D4E3C412;
+        return 0x3aEc41183547F36F7E65Ed213ce34073bc93503E;
     }
 }

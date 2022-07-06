@@ -7,7 +7,7 @@ import {SplitMain} from '../contracts/splits/SplitMain.sol';
 import '../contracts/ArtistCreatorProxy.sol';
 import '../contracts/ArtistCreator.sol';
 import '../contracts/ArtistCreatorV3.sol';
-import '../contracts/ArtistV6.sol';
+import '../contracts/test-contracts/MOCK_ArtistV6.sol';
 
 contract TestConfig is Test {
     struct KeyPair {
@@ -16,7 +16,7 @@ contract TestConfig is Test {
     }
 
     ArtistCreatorV3 artistCreator;
-    ArtistV6 artistContract;
+    MOCK_ArtistV6 artistContract;
 
     uint256 constant TICKET_NUM_ZERO = 0;
     uint256 constant NULL_PRIV_KEY = 0x0000000000000000000000000000000000000000000000000000000000000000;
@@ -48,8 +48,8 @@ contract TestConfig is Test {
     SplitMain splitMain;
 
     constructor() {
-        // Private key for address 0xB0A36b3CeDf210f37a5E7BC28d4b8E91D4E3C412
-        ADMIN_PRIV_KEY = 0xece6bd89e94322d19ff88bc095e4f9e26b8c6bde12151f33b7dd386bd55af196;
+        // Private key for address 0x3aEc41183547F36F7E65Ed213ce34073bc93503E
+        ADMIN_PRIV_KEY = 0x666;
         SOUND_ADMIN_ADDRESS = vm.addr(ADMIN_PRIV_KEY);
         ARTIST1_ADDRESS = vm.addr(0x7d94af0f2fc23136c0e52b4d4dfc5b2625323f7a33b376067d7c6cbef3103646);
         FUNDING_RECIPIENT = ARTIST1_ADDRESS;
@@ -93,7 +93,7 @@ contract TestConfig is Test {
         artistCreator = ArtistCreatorV3(address(proxy));
 
         // Deploy latest Artist implementation
-        address artistImplementation = address(new ArtistV6());
+        address artistImplementation = address(new MOCK_ArtistV6());
 
         // Get beacon for upgrade
         address beaconAddress = ArtistCreator(proxy).beaconAddress();
@@ -113,7 +113,7 @@ contract TestConfig is Test {
 
         // Deploy artist proxy
         vm.prank(ARTIST1_ADDRESS);
-        artistContract = ArtistV6(artistCreator.createArtist(signature, ARTIST_NAME, ARTIST_SYMBOL, BASE_URI));
+        artistContract = MOCK_ArtistV6(artistCreator.createArtist(signature, ARTIST_NAME, ARTIST_SYMBOL, BASE_URI));
     }
 
     // Creates auth signature needed for createArtist function
@@ -140,28 +140,27 @@ contract TestConfig is Test {
         address buyer,
         uint256 editionId,
         uint256 ticketNum
-    )
-        public
-        returns (bytes memory signature)
-    {
+    ) public returns (bytes memory signature) {
         // Build auth signature
         // (equivalent to ethers.js wallet._signTypedData())
         bytes32 digest = keccak256(
             abi.encodePacked(
                 '\x19\x01',
                 artistCreator.DOMAIN_SEPARATOR(),
-                keccak256(abi.encode(
-                    artistContract_.PERMISSIONED_SALE_TYPEHASH(), 
-                    address(artistContract_),
-                    buyer,
-                    editionId,
-                    ticketNum
-                ))
+                keccak256(
+                    abi.encode(
+                        artistContract_.PERMISSIONED_SALE_TYPEHASH(),
+                        address(artistContract_),
+                        buyer,
+                        editionId,
+                        ticketNum
+                    )
+                )
             )
         );
-        
+
         (uint8 v, bytes32 r, bytes32 s) = vm.sign(signerPrivateKey, digest);
-        return abi.encodePacked(r, s, v);    
+        return abi.encodePacked(r, s, v);
     }
 
     function createEdition(uint32 quantity) public {
