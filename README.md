@@ -14,7 +14,7 @@ privately at dev@sound.xyz.
 
 ---
 
-#### Prerequisites
+## Prerequisites
 
 - [pnpm](https://pnpm.io/)
 - [brew](https://brew.sh/)
@@ -26,3 +26,7 @@ To install, run `pnpm install`
 To run tests: `pnpm test`
 
 To see test coverage: `npx hardhat coverage`
+
+## Upgrade deployments
+
+- [Protocol upgrades runbook](https://www.notion.so/soundxyz/Protocol-upgrades-runbook-14f0fb445aa8427fb616036e88d3ad30)

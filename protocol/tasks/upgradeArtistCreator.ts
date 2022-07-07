@@ -26,7 +26,17 @@ task('upgradeArtistCreator', 'Deploys a new ArtistCreator implementation & point
 
     const deployReceipt = await newArtistCreator.deployTransaction.wait();
 
-    if (deployReceipt.status === 1) {
+    if (deployReceipt.status !== 1) {
+      console.error('Deployment failed');
+      return;
+    }
+
+    if (network.name === 'mainnet') {
+      console.log(
+        `Deployment successful! You can now use the gnosis safe to upgrade to the new logic contract:`,
+        newArtistCreator.address
+      );
+    } else {
       console.log(`ArtistCreatorV${args.newVersion} deployed successfully! Upgrading proxy...`);
 
       // Upgrade proxy to new implementation
@@ -46,16 +56,14 @@ task('upgradeArtistCreator', 'Deploys a new ArtistCreator implementation & point
       console.log('Waiting for etherscan to index the bytecode...');
 
       await new Promise((resolve) => setTimeout(resolve, 30_000));
-
-      console.log('Verifying on etherscan...');
-
-      const options: any = {
-        address: newArtistCreator.address,
-        constructorArguments: [],
-      };
-
-      await run('verify:verify', options);
-    } else {
-      console.error('Deployment failed');
     }
+
+    console.log('Verifying on etherscan...');
+
+    const options: any = {
+      address: newArtistCreator.address,
+      constructorArguments: [],
+    };
+
+    await run('verify:verify', options);
   });

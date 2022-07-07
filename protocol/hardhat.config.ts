@@ -85,11 +85,11 @@ const config: HardhatUserConfig = {
         mnemonic: process.env.MNEMONIC,
       },
     },
-    // TODO: figure out why this breaks the build ("Error: could not detect network (event="noNetwork", code=NETWORK_ERROR")
-    // mainnet: {
-    //   url: `https://eth-mainnet.alchemyapi.io/v2/${process.env.NEXT_PUBLIC_ALCHEMY_KEY}`,
-    //   accounts: [process.env.ADMIN_PRIVATE_KEY!],
-    // },
+    // truffle dashboard
+    truffle: {
+      url: 'http://localhost:24012/rpc',
+      timeout: 300_000,
+    },
   },
   paths: {
     sources: 'contracts/',
