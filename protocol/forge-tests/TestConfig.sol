@@ -7,7 +7,7 @@ import {SplitMain} from '../contracts/splits/SplitMain.sol';
 import '../contracts/ArtistCreatorProxy.sol';
 import '../contracts/ArtistCreator.sol';
 import '../contracts/ArtistCreatorV3.sol';
-import '../contracts/test-contracts/MOCK_ArtistV6.sol';
+import '../contracts/ArtistV6.sol';
 
 contract TestConfig is Test {
     struct KeyPair {
@@ -16,7 +16,10 @@ contract TestConfig is Test {
     }
 
     ArtistCreatorV3 artistCreator;
-    MOCK_ArtistV6 artistContract;
+    ArtistV6 artistContract;
+
+    // mainnet gnosis safe
+    address constant SOUND_RECOVERY_ADDRESS = 0x858a92511485715Cfb754f397a7894b7724c7Abd;
 
     uint256 constant TICKET_NUM_ZERO = 0;
     uint256 constant NULL_PRIV_KEY = 0x0000000000000000000000000000000000000000000000000000000000000000;
@@ -93,7 +96,7 @@ contract TestConfig is Test {
         artistCreator = ArtistCreatorV3(address(proxy));
 
         // Deploy latest Artist implementation
-        address artistImplementation = address(new MOCK_ArtistV6());
+        address artistImplementation = address(new ArtistV6());
 
         // Get beacon for upgrade
         address beaconAddress = ArtistCreator(proxy).beaconAddress();
@@ -113,7 +116,7 @@ contract TestConfig is Test {
 
         // Deploy artist proxy
         vm.prank(ARTIST1_ADDRESS);
-        artistContract = MOCK_ArtistV6(artistCreator.createArtist(signature, ARTIST_NAME, ARTIST_SYMBOL, BASE_URI));
+        artistContract = ArtistV6(artistCreator.createArtist(signature, ARTIST_NAME, ARTIST_SYMBOL, BASE_URI));
     }
 
     // Creates auth signature needed for createArtist function

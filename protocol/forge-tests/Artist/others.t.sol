@@ -318,7 +318,8 @@ contract Artist_others is TestConfig {
     function test_setSoundOverrideSuccess() public {
         address newArtistWallet = vm.addr(987654321);
 
-        vm.prank(SOUND_ADMIN_ADDRESS);
+        vm.prank(SOUND_RECOVERY_ADDRESS);
+        vm.chainId(1);
         artistContract.setOwnerOverride(newArtistWallet);
 
         assertEq(artistContract.owner(), newArtistWallet);
@@ -330,6 +331,7 @@ contract Artist_others is TestConfig {
 
         vm.expectRevert(bytes('unauthorized'));
         vm.prank(attacker);
+        vm.chainId(1);
         artistContract.setOwnerOverride(attacker);
     }
 }
