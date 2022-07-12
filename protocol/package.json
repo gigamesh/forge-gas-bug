@@ -24,6 +24,7 @@
     "test:f": "forge test -vvv",
     "test:w": "forge test --watch -vvv",
     "test": "pnpm test:hh && pnpm test:f",
+    "gas": "forge test --gas-report",
     "coverage": "hardhat coverage",
     "size": "hardhat size-contracts",
     "test-watcher": "bob-tsm --cjs scripts/test-watcher.ts",

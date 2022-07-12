@@ -10,4 +10,4 @@ remappings = [
   "@rari-capital/solmate=protocol/node_modules/@rari-capital/solmate/",
   "hardhat=protocol/node_modules/hardhat/",
 ]
-gas_reports = ["ArtistV5","ArtistV6","ArtistCreatorV2","ArtistCreatorV3"]
+gas_reports = ["*"]
